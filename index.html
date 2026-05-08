@@ -49,29 +49,11 @@
             margin-top: 4px;
         }
         .weather-bar {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 20px;
+            display: none;
         }
         .weather-btn {
-            padding: 6px 16px;
-            border-radius: 100px;
-            border: 1px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: 0.2s;
+            display: none;
         }
-        .weather-btn.active {
-            background: rgba(59, 130, 246, 0.15);
-            color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        .weather-btn:hover { border-color: #52525b; }
-        .weather-btn.custom { border-style: dashed; }
         main {
             display: flex;
             flex: 1;
@@ -390,8 +372,6 @@
         <div class="subtitle">小白零门槛，一键搞定提示词!</div>
     </header>
 
-    <div class="weather-bar" id="weatherBar"></div>
-
     <main>
         <div id="left-panel">
             <div class="tab-bar" id="tabBar"></div>
@@ -483,14 +463,6 @@ let formSchema = null;
 let currentData = {};
 let currentOutputMode = 'json';
 let currentConfigPath = 'config.json';
-let currentWeather = 'sunny';
-
-// Weather / multi-config support
-const weatherConfig = {
-    sunny: { prompt: "晴天，明亮的阳光，清晰的天空，柔和的自然光，高质量细节", config: "config.json" },
-    cloudy: { prompt: "阴天，柔和的散射光，平静的氛围，细节清晰，高画质", config: "config.json" },
-    rainy: { prompt: "雨天，湿润的地面，雨滴效果，朦胧氛围，电影级质感", config: "config.json" }
-};
 
 let collections = [];
 try { collections = JSON.parse(localStorage.getItem('proprompt_collections') || '[]'); } catch(e) { collections = []; }
@@ -836,26 +808,6 @@ function rebuildCurrentTab() {
 }
 
 // ==================== WEATHER ====================
-function initWeatherButtons() {
-    const bar = document.getElementById('weatherBar');
-    if (!bar) return;
-    bar.innerHTML = '';
-    for (const key in weatherConfig) {
-        const btn = document.createElement('button');
-        btn.className = 'weather-btn' + (key === currentWeather ? ' active' : '') + (weatherConfig[key].isCustom ? ' custom' : '');
-        btn.dataset.type = key;
-        btn.textContent = weatherConfig[key].prompt.substring(0, 4) || key;
-        btn.onclick = () => {
-            currentWeather = key;
-            currentConfigPath = weatherConfig[key].config;
-            document.querySelectorAll('.weather-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            loadConfig();
-        };
-        bar.appendChild(btn);
-    }
-}
-
 // ==================== LOAD CONFIG ====================
 async function loadConfig() {
     const candidates = [currentConfigPath];
@@ -1069,7 +1021,6 @@ function decCopyAndOpen() {
 
 // ==================== INIT ====================
 window.onload = () => {
-    initWeatherButtons();
     loadConfig();
     switchOutputTab('json');
     renderCollections();
