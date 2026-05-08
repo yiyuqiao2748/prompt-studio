@@ -624,6 +624,10 @@ function updateData(key, val) {
         tag.textContent = valTagText(field, val);
         tag.classList.toggle('empty', val === false || (Array.isArray(val) ? val.length === 0 : val === ''));
     }
+    // If this field has dependents, rebuild the current tab
+    if (field && field.type === 'switch') {
+        rebuildCurrentTab();
+    }
     updatePreview();
 }
 
@@ -749,6 +753,7 @@ function buildSectionFields(section, grid) {
     const fields = section.fields;
     for (const fk in fields) {
         const field = fields[fk];
+        if (field.depends && !currentData[field.depends]) continue;
         const card = document.createElement('div');
         card.className = 'card';
         const iv = pickInitialValue(field);
@@ -803,13 +808,20 @@ function buildSectionFields(section, grid) {
     }
 }
 
-function switchTab(tabId) {
-    document.querySelectorAll('#tabBar .tab-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.tab === tabId);
-    });
-    document.querySelectorAll('#tabContent .tab-panel').forEach(p => {
-        p.classList.toggle('active', p.id === tabId);
-    });
+function rebuildCurrentTab() {
+    const activeTab = document.querySelector('#tabBar .tab-btn.active');
+    if (!activeTab) return;
+    const tabId = activeTab.dataset.tab;
+    const panel = document.getElementById(tabId);
+    if (!panel) return;
+    const sectionKey = tabId.replace('tab-', '');
+    const section = formSchema[sectionKey];
+    if (!section) return;
+    const grid = panel.querySelector('.grid-container');
+    if (grid) {
+        grid.innerHTML = '';
+        buildSectionFields(section, grid);
+    }
 }
 
 // ==================== WEATHER ====================
