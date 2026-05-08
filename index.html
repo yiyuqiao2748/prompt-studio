@@ -81,12 +81,15 @@
             max-width: 1300px;
             width: 100%;
             margin: 0 auto;
+            align-items: stretch;
+            min-height: calc(100vh - 120px);
         }
         #left-panel {
             flex: 1;
             padding-right: 8px;
             overflow-y: auto;
             min-height: 0;
+            max-height: calc(100vh - 140px);
         }
         #right-panel {
             width: 340px;
@@ -96,6 +99,21 @@
             background: var(--card-bg);
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
+            min-height: 0;
+            max-height: calc(100vh - 140px);
+        }
+        .panel-wechat {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding-top: 8px;
+            margin-top: 8px;
+            border-top: 1px solid var(--border-color);
+        }
+        .panel-wechat span {
+            font-size: 0.78rem;
+            color: var(--text-muted);
         }
         .tab-bar {
             display: flex;
@@ -452,10 +470,6 @@
                     <button class="copy-btn" onclick="copyOutput()">复制当前</button>
                     <button class="copy-btn" onclick="saveToCollection()">保存收藏</button>
                 </div>
-                <div class="panel-wechat">
-                    <span style="font-size:0.8rem;color:var(--text-muted);">微信号: <span class="wechat-val">LinDesign666</span></span>
-                    <button class="copy-btn wechat-btn" onclick="copyWeChat()">复制</button>
-                </div>
             </div>
         </div>
     </main>
@@ -464,7 +478,7 @@
 
 <script>
 // ==================== GLOBAL STATE ====================
-const WECHAT_ID = "LinDesign666";
+
 let formSchema = null;
 let currentData = {};
 let currentOutputMode = 'json';
@@ -703,7 +717,7 @@ function buildTabs(schema) {
     // Storyboard tab button
     const sbBtn = document.createElement('button');
     sbBtn.className = 'tab-btn';
-    sbBtn.textContent = '🎬 分镜';
+    sbBtn.textContent = schema['分镜制作'] ? '🎬 分镜助手' : '🎬 分镜';
     sbBtn.dataset.tab = 'tab-storyboard';
     sbBtn.onclick = () => switchTab('tab-storyboard');
     tabBar.appendChild(sbBtn);
@@ -854,17 +868,6 @@ function copyOutput() {
         ta.value = text; document.body.appendChild(ta); ta.select();
         document.execCommand('copy'); ta.remove();
         showToast('✅ 已复制');
-    }
-}
-
-function copyWeChat() {
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(WECHAT_ID).then(() => showToast('✅ 微信已复制'));
-    } else {
-        const ta = document.createElement('textarea');
-        ta.value = WECHAT_ID; document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); ta.remove();
-        showToast('✅ 微信已复制');
     }
 }
 
