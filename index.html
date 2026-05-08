@@ -567,6 +567,7 @@ function buildNestedOutput() {
     const nested = {};
     if (formSchema) {
         for (const sk in formSchema) {
+            if (sk === '分镜制作') continue;
             nested[sk] = {};
             const fields = formSchema[sk].fields;
             for (const fk in fields) {
@@ -692,6 +693,7 @@ function buildTabs(schema) {
     const allTabIds = [];
     let first = true;
     for (const sk in schema) {
+        if (sk === '分镜制作') continue;
         const section = schema[sk];
         const btn = document.createElement('button');
         btn.className = 'tab-btn' + (first ? ' active' : '');
