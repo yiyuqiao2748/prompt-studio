@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>LIN Nanobanana AI提示词生成器</title>
+    <style>
+        :root {
+            --bg-color: #09090b;
+            --card-bg: #18181b;
+            --header-bg: rgba(9, 9, 11, 0.85);
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --success-color: #10b981;
+            --border-color: #27272a;
+            --input-bg: #09090b;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+			width: 95%;
+			margin: 0 auto;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+
+        header {
+            width: 100%;
+            background-color: var(--header-bg);
+            backdrop-filter: blur(12px);
+            padding: 12px 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .header-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-align: center;
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .header-center-row1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px 18px;
+        }
+
+        .logo { 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            font-size: 1.65rem; 
+            font-weight: 700; 
+            letter-spacing: 0.5px; 
+        }
+        
+        .logo img {
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .weather-bar {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+        }
+        .weather-btn {
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .weather-btn.active {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+        }
+        .weather-btn.custom {
+           /* border-color: #a855f7;
+            color: #d8b4fe; */
+        }
+        .weather-btn.custom.active {
+             background: var(--primary-color);
+                        color: #fff;
+                        border-color: var(--primary-color);
+        }
+
+        .header-center-row2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px 24px;
+        }
+
+        .sponsor-banner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 18px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 100px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1.125rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .sponsor-banner img { height: 21px; }
+
+        .wechat-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.125rem;
+            color: var(--text-muted);
+        }
+        .wechat-box .copy-btn {
+            font-size: 1.05rem;
+            padding: 8px 15px;
+        }
+
+        @media (max-width: 720px) {
+            header {
+                padding: 12px 16px;
+                padding-left: max(16px, env(safe-area-inset-left));
+                padding-right: max(16px, env(safe-area-inset-right));
+            }
+            .logo { font-size: 1.5rem; }
+            .logo img { height: 33px; }
+            .sponsor-banner { font-size: 1.05rem; padding: 5px 14px; }
+            .sponsor-banner img { height: 19px; }
+            .wechat-box { font-size: 1.05rem; }
+            .wechat-box .copy-btn { font-size: 0.98rem; padding: 7px 12px; }
+            .weather-bar { gap: 6px; }
+            .weather-btn { padding: 6px 12px; font-size: 0.85rem; }
+        }
+
+        main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            min-height: 0;
+            padding: 24px 40px;
+            padding-bottom: max(24px, env(safe-area-inset-bottom));
+            gap: 40px;
+            box-sizing: border-box;
+        }
+
+        #left-panel { flex: 1; overflow-y: auto; padding-right: 10px; min-height: 0; -webkit-overflow-scrolling: touch; }
+
+        .section-title { font-size: 1.1rem; font-weight: 600; margin: 32px 0 20px 0; display: flex; align-items: center; gap: 10px; }
+        .section-title:first-child { margin-top: 0; }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 1500px) {
+            .grid-container { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (max-width: 1100px) {
+            .grid-container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 640px) {
+            .grid-container { grid-template-columns: minmax(0, 1fr); }
+        }
+
+        @media (max-width: 900px) {
+            body {
+                padding-top: env(safe-area-inset-top);
+            }
+            main {
+                flex-direction: column;
+                flex: 1;
+                min-height: 0;
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+                padding: 12px 16px;
+                padding-bottom: max(16px, env(safe-area-inset-bottom));
+                padding-left: max(16px, env(safe-area-inset-left));
+                padding-right: max(16px, env(safe-area-inset-right));
+                gap: 16px;
+            }
+            #left-panel {
+                flex: 0 0 auto;
+                padding-right: 0;
+                overflow: visible;
+            }
+            #right-panel {
+                width: 100%;
+                flex: 0 0 auto;
+                margin-top: 0;
+                max-height: none;
+                min-height: 0;
+                border-radius: var(--radius-lg);
+            }
+            .preview-header {
+                padding: 12px 14px;
+                gap: 8px;
+            }
+            #preview-content {
+                flex: none;
+                min-height: 120px;
+                max-height: min(55vh, 480px);
+                overflow-y: auto;
+                padding: 12px 14px;
+            }
+            .preview-top-row {
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: flex-start;
+            }
+            .copy-btn {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+                min-height: 36px;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            border: 1px solid var(--border-color);
+            transition: 0.2s;
+            min-height: 0;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        .card:hover { border-color: #3f3f46; }
+
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .card-title-group { display: flex; flex-direction: column; gap: 6px; }
+        .card-label { font-size: 0.95rem; font-weight: 600; }
+        .card-description { font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; margin: 0; max-width: 100%; }
+
+        .selected-value { font-size: 0.75rem; color: var(--primary-color); background: rgba(59, 130, 246, 0.12); padding: 3px 10px; border-radius: 100px; font-weight: 500; }
+        .selected-value.empty { color: var(--text-muted); background: rgba(255, 255, 255, 0.05); }
+
+        select, input[type="text"] { background-color: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 10px 14px; border-radius: var(--radius-md); font-size: 0.9rem; width: 100%; box-sizing: border-box; outline: none; }
+        
+        .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .pill-label {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .pill-label input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            position: absolute;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            pointer-events: none;
+        }
+        .pill-text { display: inline-block; background-color: var(--input-bg); color: var(--text-muted); padding: 6px 12px; border-radius: 100px; font-size: 0.8rem; cursor: pointer; border: 1px solid var(--border-color); }
+        .pill-label input:checked + .pill-text { background-color: rgba(59, 130, 246, 0.15); color: var(--primary-color); border-color: var(--primary-color); }
+
+        .pill-group-single .pill-label input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            position: absolute;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            pointer-events: none;
+        }
+        .pill-group-single .pill-label input:checked + .pill-text {
+            background-color: rgba(168, 85, 247, 0.18);
+            color: #d8b4fe;
+            border-color: #a855f7;
+        }
+
+        #right-panel { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; background-color: var(--card-bg); border-radius: var(--radius-lg); border: 1px solid var(--border-color); }
+        .preview-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: flex-start; flex-direction: column; gap: 10px; }
+        .preview-top-row { display: flex; width: 100%; justify-content: space-between; align-items: center; }
+        .preview-title { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); letter-spacing: 1px; }
+
+        .copy-btn { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.7rem; transition: 0.2s; }
+        .wechat-btn { background: rgba(16, 185, 129, 0.1); color: var(--success-color); border: 1px solid rgba(16, 185, 129, 0.2); }
+        
+        #preview-content { flex: 1; padding: 20px; overflow-y: auto; background: #0c0c0e; min-height: 0; }
+        pre { margin: 0; font-family: "Menlo", monospace; font-size: 0.75rem; color: #a6accd; line-height: 1.5; white-space: pre-wrap; }
+
+        .panel-wechat {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px 10px;
+            width: 100%;
+            margin-top: 8px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+        .panel-wechat .wechat-box {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .panel-wechat .copy-btn {
+            font-size: 0.75rem;
+            padding: 6px 12px;
+        }
+
+        .hidden-adder { display: none; gap: 8px; margin-top: 8px; }
+        .hidden-adder.active { display: flex; }
+
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #27272a; transition: .3s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: #a1a1aa; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(20px); background-color: white; }
+
+        /* 自定义模态框样式 */
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-center">
+            <div class="header-center-row1">
+                <div class="logo">
+                    <img src="images/logo1.png" alt="Logo" onerror="this.style.display='none'">
+                    <span style="font-weight: bold; 
+  background: -webkit-linear-gradient(left, #FFF16A, #FF4066);background-clip: text;color: transparent;">LIN 香蕉Nanobanana/GPT-image2 AI提示词生成器</span>
+                </div>
+            </div>
+
+            <div class="header-center-row2">
+                <a href="https://www.fengbaoch.com/?referralCode=5ECTZ0J7" class="sponsor-banner" target="_blank" rel="noopener noreferrer">
+                    <img src="images/logo2.png" alt="风暴500" onerror="this.style.display='none'">
+                    <span >风暴500算力免费畅用</span>
+                </a>
+                <a href="https://v.douyin.com/IzOXsBqO18U/" class="sponsor-banner" target="_blank" rel="noopener noreferrer">
+                    <span >AI提示词生成器使用视频教程</span>
+                </a>
+            </div>
+            <div style="font-size: 28px; 
+  font-weight: bold; 
+  background: -webkit-linear-gradient(left, #FFF16A, #FF4066);background-clip: text;color: transparent;">小白零门槛，一键搞定提示词!</div>
+        </div>
+    </header>
+
+    <main>
+        <div id="left-panel">
+            <!-- 天气按钮 -->
+            <div class="weather-bar" id="weatherBar" style="margin-bottom: 30px;">
+              <!--  <button class="weather-btn active" data-type="sunny">晴天</button>
+                <button class="weather-btn" data-type="cloudy">阴天</button>
+                <button class="weather-btn" data-type="rainy">雨天</button>
+                <button class="weather-btn" data-type="windy">风天</button> -->
+            </div>
+            <div id="form-container">
+                <div id="message-box" style="text-align: center; padding: 40px; color: var(--text-muted);">正在加载配置...</div>
+            </div>
+        </div>
+
+        <div id="right-panel">
+			<span class="preview-title" style="font-size: 20px;text-align: center;margin: 10px 0;">JSON 提示词</span>
+            <div id="preview-content">
+                <pre id="json-preview">{}</pre>
+            </div>
+            <div class="preview-header" style="border-top: 1px solid var(--border-color); margin-top: 0;">
+                <div class="preview-top-row">
+                    <div style="display: flex; gap: 6px; margin: 0 auto;">
+                        <button type="button" class="copy-btn" onclick="copyJson(this)">复制JSON</button>
+                    </div>
+                </div>
+                <div class="panel-wechat">
+                    <div class="wechat-box">
+                        <span>微信号: <span class="wechat-val">LinDesign666</span></span>
+                    </div>
+                    <button type="button" class="copy-btn wechat-btn" onclick="copyWeChat(this)">复制</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const WECHAT_ID = "LinDesign666"; 
+        const CONFIG_API_URL = 'qzc60jn8szi1PRH6O3gu/api.php';
+
+        let currentData = {};
+        let formSchema = null;
+        let currentConfigPath = 'config.json'; // 默认配置文件
+        let currentWeather = "sunny";
+        // 天气配置，内置项 + 通过接口发现的自定义配置
+        let weatherConfig = {
+            sunny: { 
+                prompt: "晴天，明亮的阳光，清晰的天空，柔和的自然光，高质量细节", 
+                config: "config.json",
+                isCustom: false
+            },
+            cloudy: { 
+                prompt: "阴天，柔和的散射光，平静的氛围，细节清晰，高画质", 
+                config: "congfigyu.json",
+                isCustom: false
+            },
+            rainy: { 
+                prompt: "雨天，湿润的地面，雨滴效果，朦胧氛围，电影级质感", 
+                config: "config.json",
+                isCustom: false
+            },
+            windy: { 
+                prompt: "风天，发丝与衣物飘动，自然动态，清爽氛围，细节丰富", 
+                config: "config.json",
+                isCustom: false
+            }
+        };
+
+        async function callConfigApi(action, payload = {}) {
+            const response = await fetch(CONFIG_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action, ...payload })
+            });
+            let result = null;
+            try {
+                result = await response.json();
+            } catch (e) {
+                throw new Error('接口返回了无效数据');
+            }
+            if (!response.ok || (result && result.error)) {
+                throw new Error((result && result.error) || `请求失败 HTTP ${response.status}`);
+            }
+            return result;
+        }
+
+        function sanitizeCustomWeatherKey(fileName) {
+            return `custom_${String(fileName).replace(/\.json$/i, '').replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+        }
+
+        function humanizeWeatherName(fileName) {
+            const base = String(fileName).replace(/\.json$/i, '');
+            if (base.startsWith('custom_')) {
+                return base.slice(7) || base;
+            }
+            return base;
+        }
+
+        // 从接口加载自定义天气配置
+        async function loadCustomWeathersFromApi() {
+            const result = await callConfigApi('list');
+            Object.keys(weatherConfig).forEach(key => {
+                if (weatherConfig[key].isCustom) {
+                    delete weatherConfig[key];
+                }
+            });
+            (result.files || []).forEach(file => {
+                if (!/^custom_.*\.json$/i.test(file)) {
+                    return;
+                }
+                const key = sanitizeCustomWeatherKey(file);
+                weatherConfig[key] = {
+                    name: humanizeWeatherName(file),
+                    prompt: humanizeWeatherName(file),
+                    config: file,
+                    isCustom: true
+                };
+            });
+            renderCustomWeatherButtons();
+        }
+
+        // 渲染自定义天气按钮到天气栏
+        function renderCustomWeatherButtons() {
+            const weatherBar = document.getElementById('weatherBar');
+            document.querySelectorAll('.weather-btn.custom').forEach(btn => btn.remove());
+            
+            Object.keys(weatherConfig).forEach(key => {
+                const config = weatherConfig[key];
+                if (config.isCustom && !document.querySelector(`.weather-btn[data-type="${key}"]`)) {
+                    const btn = document.createElement('button');
+                    btn.className = 'weather-btn custom';
+                    btn.dataset.type = key;
+                    btn.textContent = config.name;
+                    weatherBar.appendChild(btn);
+                }
+            });
+            initWeatherButtons();
+        }
+
+        window.onload = async () => {
+            document.querySelectorAll('.wechat-val').forEach(el => el.textContent = WECHAT_ID);
+            initWeatherButtons();
+            try {
+                await loadCustomWeathersFromApi();
+            } catch (e) {
+                console.error(e);
+            }
+            await loadConfig();
+        };
+
+        // 初始化天气按钮（切换配置文件）
+        function initWeatherButtons() {
+            const btns = document.querySelectorAll('.weather-btn');
+            btns.forEach(btn => {
+                btn.onclick = () => {
+                    btns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const type = btn.dataset.type;
+                    currentWeather = type;
+                    const config = weatherConfig[type];
+                    currentConfigPath = config.config; // 切换配置文件
+                    loadConfig(); // 重新加载表单
+                };
+            });
+        }
+
+        async function loadConfig() {
+            const container = document.getElementById('form-container');
+            container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">正在加载配置...</div>';
+            try {
+                const result = await callConfigApi('load', { file: currentConfigPath });
+                buildForm(result.data);
+            } catch (error) {
+                container.innerHTML = `<div style="color:#ef4444; text-align:center; padding:24px; line-height:1.6;">加载失败: ${error.message}</div>`;
+            }
+        }
+
+        function escapeAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
+        function escapeJsSq(s) {
+            return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r/g, '\\r').replace(/\n/g, '\\n');
+        }
+        function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function normOptionItem(raw) {
+            if (typeof raw === 'string') return { value: raw, label: raw };
+            if (typeof raw === 'object') return { value: String(raw.value), label: String(raw.label) };
+            return null;
+        }
+        function getFieldByKey(fieldKey) {
+            if (!formSchema) return null;
+            for (const sk of Object.keys(formSchema)) {
+                const sec = formSchema[sk];
+                if (sec.fields && sec.fields[fieldKey]) return sec.fields[fieldKey];
+            }
+            return null;
+        }
+        function flatOptionValues(field) {
+            if (field.group && field.options && typeof field.options === 'object') {
+                const out = [];
+                for (const g in field.options) {
+                    field.options[g].forEach(item => {
+                        const n = normOptionItem(item);
+                        if (n) out.push(n.value);
+                    });
+                }
+                return out;
+            }
+            return (field.options || []).map(i => normOptionItem(i)?.value).filter(Boolean);
+        }
+        function labelForOptionValue(field, v) {
+            if (!field || !field.options) return v;
+            const list = Array.isArray(field.options) ? field.options : Object.values(field.options).flat();
+            const item = list.find(i => normOptionItem(i).value === v);
+            return item ? normOptionItem(item).label : v;
+        }
+        function pickInitialValue(field) {
+            if (field.type === 'switch') return !!field.default;
+            if (field.type === 'multi-select') return Array.isArray(field.default) ? field.default : [];
+            if (field.type === 'select' || field.type === 'button-select') {
+                const opts = flatOptionValues(field);
+                return opts.includes(field.default) ? field.default : opts[0] || '';
+            }
+            if (field.type === 'text') return String(field.default || '');
+            return '';
+        }
+        function valTagText(field, v) {
+            if (field.type === 'switch') return v ? '开' : '关';
+            if (field.type === 'multi-select') return v.map(x => labelForOptionValue(field,x)).join(' · ') || '未选';
+            if (field.type === 'select' || field.type === 'button-select') return labelForOptionValue(field,v) || '未选';
+            return v || '未填';
+        }
+
+        function buildForm(schema) {
+            const container = document.getElementById('form-container');
+            container.innerHTML = '';
+            currentData = {};
+            formSchema = schema;
+
+            for (const sectionKey in schema) {
+                const section = schema[sectionKey];
+                const sectionDiv = document.createElement('div');
+                sectionDiv.innerHTML = `<div class="section-title"><span>${section.icon || '📌'}</span> ${escapeHtml(section.title)}</div>`;
+                
+                const grid = document.createElement('div');
+                grid.className = 'grid-container';
+
+                for (const fieldKey in section.fields) {
+                    const field = section.fields[fieldKey];
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    const initialVal = pickInitialValue(field);
+                    currentData[fieldKey] = initialVal;
+                    const tagShow = valTagText(field, initialVal);
+                    const tagClass = (initialVal === false || (Array.isArray(initialVal) && initialVal.length === 0) || initialVal === '') 
+                        ? 'selected-value empty' : 'selected-value';
+
+                    let content = `
+                    <div class="card-header">
+                        <div class="card-title-group">
+                            <span class="card-label">${escapeHtml(field.label)}</span>
+                            ${field.description ? `<p class="card-description">${escapeHtml(field.description)}</p>` : ''}
+                            <span id="val-${fieldKey}" class="${tagClass}">${tagShow}</span>
+                        </div>`;
+                    
+                    if (field.type === 'switch') {
+                        content += `<label class="switch"><input type="checkbox" ${initialVal ? 'checked' : ''} onchange="updateData('${fieldKey}',this.checked)"><span class="slider"></span></label>`;
+                    } else {
+                        content += `</div><div>`;
+                        if (field.type === 'text') {
+                            content += `<input type="text" value="${escapeAttr(initialVal)}" oninput="updateData('${fieldKey}',this.value)">`;
+                        } else if (field.type === 'select') {
+                            content += `<select id="select-${fieldKey}" onchange="handleSelectChange('${fieldKey}',this.value)">`;
+                            if (field.group) {
+                                for (const g in field.options) {
+                                    content += `<optgroup label="${escapeAttr(g)}">`;
+                                    (field.options[g] || []).forEach(opt => {
+                                        const n = normOptionItem(opt);
+                                        content += `<option value="${escapeAttr(n.value)}" ${n.value === initialVal ? 'selected' : ''}>${escapeHtml(n.label)}</option>`;
+                                    });
+                                    content += `</optgroup>`;
+                                }
+                            } else {
+                                (field.options || []).forEach(opt => {
+                                    const n = normOptionItem(opt);
+                                    content += `<option value="${escapeAttr(n.value)}" ${n.value === initialVal ? 'selected' : ''}>${escapeHtml(n.label)}</option>`;
+                                });
+                            }
+                            content += `<option value="__ADD_NEW__">➕ 自定义</option></select>`;
+                        } else if (field.type === 'multi-select') {
+                            content += `<div class="pill-group" id="pills-${fieldKey}">`;
+                            (field.options || []).forEach(opt => {
+                                const n = normOptionItem(opt);
+                                const checked = initialVal.includes(n.value) ? 'checked' : '';
+                                content += `<label class="pill-label"><input type="checkbox" value="${escapeAttr(n.value)}" ${checked} onchange="updateMultiData('${fieldKey}',this.value,this.checked)"><span class="pill-text">${escapeHtml(n.label)}</span></label>`;
+                            });
+                            content += `<div class="pill-text" style="border-style:dashed" onclick="toggleAdder('${fieldKey}')">+ 自定义</div></div>`;
+                        } else if (field.type === 'button-select') {
+                            const name = `radio-${fieldKey}`;
+                            content += `<div class="pill-group pill-group-single" id="pills-${fieldKey}">`;
+                            (field.options || []).forEach(opt => {
+                                const n = normOptionItem(opt);
+                                const checked = n.value === initialVal ? 'checked' : '';
+                                content += `<label class="pill-label"><input type="radio" name="${name}" value="${escapeAttr(n.value)}" ${checked} onchange="updateData('${fieldKey}',this.value)"><span class="pill-text">${escapeHtml(n.label)}</span></label>`;
+                            });
+                            content += `<div class="pill-text" style="border-style:dashed" onclick="toggleAdder('${fieldKey}')">+ 自定义</div></div>`;
+                        }
+                        content += `<div id="adder-${fieldKey}" class="hidden-adder"><input type="text" id="input-${fieldKey}" placeholder="输入新值"><button class="copy-btn" style="background:var(--primary-color)" onclick="saveCustomItem('${fieldKey}','${field.type}')">确定</button></div></div>`;
+                    }
+                    card.innerHTML = content;
+                    grid.appendChild(card);
+                }
+                sectionDiv.appendChild(grid);
+                container.appendChild(sectionDiv);
+            }
+            updatePreview();
+        }
+
+        function updateData(key, val) {
+            currentData[key] = val;
+            const tag = document.getElementById('val-' + key);
+            const field = getFieldByKey(key);
+            tag.textContent = valTagText(field, val);
+            tag.classList.toggle('empty', val === false || val === '');
+            updatePreview();
+        }
+
+        function updateMultiData(key, val, checked) {
+            if (checked) currentData[key].push(val);
+            else currentData[key] = currentData[key].filter(x => x !== val);
+            const tag = document.getElementById('val-' + key);
+            const field = getFieldByKey(key);
+            tag.textContent = currentData[key].length ? currentData[key].map(x => labelForOptionValue(field,x)).join(' · ') : '未选';
+            tag.classList.toggle('empty', !currentData[key].length);
+            updatePreview();
+        }
+
+        function splitBoolFieldKeyToJsonPair(fk) {
+            const i = Math.max(fk.indexOf(':'), fk.indexOf('：'));
+            if (i < 0) return null;
+            return { jsonKey: fk.slice(0,i).trim(), jsonVal: fk.slice(i+1).trim() };
+        }
+
+        // 最终预览：加入天气提示词
+        function buildNestedPreviewForDisplay() {
+           // const out = { weather: weatherConfig[currentWeather].prompt, ...currentData };
+            const nested = {};
+            if (formSchema) {
+                for (const sk in formSchema) {
+                    nested[sk] = {};
+                    const fields = formSchema[sk].fields;
+                    for (const fk in fields) {
+                        const field = fields[fk];
+                        const val = currentData[fk];
+                        if (field.type === 'switch') {
+                            if (!val) continue;
+                            const p = splitBoolFieldKeyToJsonPair(fk);
+                            if (p) nested[sk][p.jsonKey] = p.jsonVal;
+                            else nested[sk][fk] = true;
+                        } else {
+                            nested[sk][fk] = val;
+                        }
+                    }
+                }
+            }
+            //nested.weather = weatherConfig[currentWeather].prompt;
+            return nested;
+        }
+
+        function updatePreview() {
+            const out = buildNestedPreviewForDisplay();
+            document.getElementById('json-preview').textContent = JSON.stringify(out, null, 4);
+        }
+
+        function handleSelectChange(key, val) {
+            if (val === '__ADD_NEW__') document.getElementById('adder-' + key).classList.add('active');
+            else {
+                document.getElementById('adder-' + key).classList.remove('active');
+                updateData(key, val);
+            }
+        }
+        function toggleAdder(key) { document.getElementById('adder-' + key).classList.toggle('active'); }
+        function saveCustomItem(key, type) {
+            const v = document.getElementById('input-' + key).value.trim();
+            if (!v) return;
+            if (type === 'select') {
+                const sel = document.getElementById('select-' + key);
+                sel.add(new Option(v, v), sel.options[sel.options.length - 1]);
+                sel.value = v;
+                updateData(key, v);
+            } else if (type === 'button-select') {
+                const pg = document.getElementById('pills-' + key);
+                const name = pg.querySelector('input[type="radio"]').name;
+                const label = document.createElement('label');
+                label.className = 'pill-label';
+                label.innerHTML = `<input type="radio" name="${name}" value="${escapeAttr(v)}" checked onchange="updateData('${key}',this.value)"><span class="pill-text">${escapeHtml(v)}</span>`;
+                pg.insertBefore(label, pg.lastElementChild);
+                updateData(key, v);
+            } else {
+                const pg = document.getElementById('pills-' + key);
+                const label = document.createElement('label');
+                label.className = 'pill-label';
+                label.innerHTML = `<input type="checkbox" value="${escapeAttr(v)}" checked onchange="updateMultiData('${key}',this.value,this.checked)"><span class="pill-text">${escapeHtml(v)}</span>`;
+                pg.insertBefore(label, pg.lastElementChild);
+                updateMultiData(key, v, true);
+            }
+            document.getElementById('input-' + key).value = '';
+            document.getElementById('adder-' + key).classList.remove('active');
+        }
+
+        async function copyTextToClipboard(text) {
+            if (navigator.clipboard) {
+                try { await navigator.clipboard.writeText(text); return; } catch(e) {}
+            }
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+        }
+        async function feedback(btn, txt) {
+            const old = btn.textContent;
+            btn.textContent = txt;
+            btn.disabled = true;
+            setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 2000);
+        }
+        async function copyJson(btn) {
+            try {
+                await copyTextToClipboard(document.getElementById('json-preview').textContent);
+                await feedback(btn, '✅ 已复制');
+            } catch(e) { alert('复制失败'); }
+        }
+        async function copyWeChat(btn) {
+            try { await copyTextToClipboard(WECHAT_ID); await feedback(btn, '✅ 已复制'); }
+            catch(e) { alert('复制失败'); }
+        }
+    </script>
+</body>
+</html>

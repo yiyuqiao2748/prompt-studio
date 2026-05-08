@@ -1,0 +1,66 @@
+{
+  "场景光效": {
+    "icon": "🌅",
+    "title": "场景与光效",
+    "fields": {
+      "任务类型": { "type": "button-select", "options": ["模型→真实摄影", "模型→概念图", "C4D动画效果", "3DsMax效果图"], "default": "模型→真实摄影", "description": "选择任务转换目标" },
+      "空间类型": { "type": "button-select", "options": ["平层家装室内", "别墅家装室内", "商业空间", "办公空间", "餐饮空间"], "default": "平层家装室内", "description": "选择空间类型" },
+      "设计风格": { "type": "select", "options": ["现代室内设计", "极简风格", "日式侘寂", "北欧风", "工业风", "新中式", "法式轻奢", "美式复古", "地中海风", "波西米亚风", "Art Deco"], "default": "现代室内设计", "description": "选择设计风格" },
+      "外景": { "type": "button-select", "options": ["城景", "山景", "海景", "花园", "根据参考图分析"], "default": "根据参考图分析", "description": "窗外或外部场景" },
+      "地点": { "type": "select", "options": ["东南亚", "中东", "欧洲", "北美", "日本", "中国南方", "中国北方"], "default": "东南亚", "description": "地理位置" },
+      "季节": { "type": "button-select", "options": ["春", "夏", "秋", "冬"], "default": "夏", "description": "季节设定" },
+      "自定义风格": { "type": "text", "default": "", "description": "补充风格关键词" },
+      "场景描述": { "type": "text", "default": "", "description": "补充场景描述" },
+      "天气": { "type": "button-select", "options": ["晴天", "阴天", "雨天"], "default": "晴天", "description": "天气条件" },
+      "时间": { "type": "button-select", "options": ["上午7点", "上午9点", "中午12点", "下午3点", "傍晚6点", "夜晚8点"], "default": "上午9点", "description": "一天中的时段" },
+      "天空光": { "type": "select", "options": ["晴天自然光", "多云柔光", "阴天散射光", "黄昏暖光", "夜景环境光"], "default": "晴天自然光", "description": "天空光源类型" },
+      "室内灯光": { "type": "select", "options": ["日常照明模式", "暖色氛围灯", "冷色工作灯", "混合层次灯光", "暗调戏剧光", "无灯全自然光"], "default": "日常照明模式", "description": "室内灯光方案" },
+      "色温": { "type": "select", "options": ["暖光（2700K）", "暖白光（3000K）", "中性光（4500K）", "冷白光（5500K）", "冷光（6500K）"], "default": "中性光（4500K）", "description": "整体色温" },
+      "太阳光影": { "type": "button-select", "options": ["无直射阳光", "柔和的阳光投射", "强烈的阳光阴影", "斑驳树影"], "default": "无直射阳光", "description": "太阳光投影效果" },
+      "窗帘": { "type": "select", "options": ["默认图中类型", "纱帘柔光", "百叶窗条纹光", "全遮光帘", "无窗帘"], "default": "默认图中类型", "description": "窗帘与透光方式" },
+      "后期色调": { "type": "select", "options": ["原生中性微暖色调", "高饱和度鲜艳", "低饱和冷淡风", "电影感青橙色调", "胶片复古暖调", "黑白摄影"], "default": "原生中性微暖色调", "description": "后期调色风格" }
+    }
+  },
+  "摄影参数": {
+    "icon": "📷",
+    "title": "摄影参数",
+    "fields": {
+      "相机型号": { "type": "select", "options": ["iPhone 17 Pro Max", "Canon EOS R5", "Sony A7R V", "Nikon Z9", "Fujifilm GFX 100S", "Hasselblad X2D"], "default": "iPhone 17 Pro Max", "description": "虚拟相机型号" },
+      "光圈": { "type": "button-select", "options": ["f/1.4", "f/2.8", "f/4", "f/5.6", "f/8", "f/11", "f/16"], "default": "f/5.6", "description": "光圈大小" },
+      "焦距": { "type": "button-select", "options": ["16mm", "24mm", "35mm", "50mm", "85mm", "135mm"], "default": "24mm", "description": "镜头焦距" },
+      "ISO": { "type": "button-select", "options": ["ISO 50", "ISO 100", "ISO 200", "ISO 400", "ISO 800"], "default": "ISO 100", "description": "感光度" },
+      "快门": { "type": "button-select", "options": ["1/1000s", "1/250s", "1/30s", "1s"], "default": "1s", "description": "快门速度" }
+    }
+  },
+  "细节增强": {
+    "icon": "✨",
+    "title": "细节增强",
+    "fields": {
+      "分辨率": { "type": "select", "options": ["8K", "4K", "2K", "1080p"], "default": "8K", "description": "出图分辨率" },
+      "画面比例": { "type": "select", "options": ["保持原图", "16:9", "4:3", "3:2", "1:1", "9:16"], "default": "保持原图", "description": "输出画面比例" },
+      "PBR写实材质:已启用 PBR 写实材质": { "type": "switch", "default": false, "description": "启用物理渲染级材质增强" },
+      "光线追踪反射:已启用光线追踪反射": { "type": "switch", "default": false, "description": "启用高精度光线追踪" },
+      "HDR包围曝光:已启用HDR包围曝光": { "type": "switch", "default": false, "description": "启用多帧HDR合成" },
+      "三脚架长曝:已启用三脚架长曝": { "type": "switch", "default": false, "description": "超稳定长曝光拍摄" },
+      "移轴矫正:已启用移轴矫正": { "type": "switch", "default": false, "description": "建筑透视矫正" },
+      "胶片颗粒质感:已启用胶片颗粒质感": { "type": "switch", "default": false, "description": "模拟胶片颗粒纹理" }
+    }
+  },
+  "核心约束": {
+    "icon": "🔒",
+    "title": "核心约束",
+    "fields": {
+      "几何保真度": { "type": "button-select", "options": ["强制几何保真", "严格结构保持", "基础轮廓保持"], "default": "强制几何保真", "description": "场景结构保持程度" },
+      "材质一致性": { "type": "button-select", "options": ["完全还原材质", "保持大类材质"], "default": "完全还原材质", "description": "材质还原精度" },
+      "转换逻辑": { "type": "text", "default": "将基础3D模型面转换为高精度、符合物理规律的真实材质(PBR)，严格保持原始几何结构、物体位置和比例关系，还原真实光照和阴影效果", "description": "核心转换逻辑描述" }
+    }
+  },
+  "分镜制作": {
+    "icon": "🎬",
+    "title": "分镜制作",
+    "fields": {
+      "分镜模式": { "type": "button-select", "options": ["2宫格", "4宫格", "6宫格", "9宫格", "自定义"], "default": "4宫格", "description": "分镜布局方式" },
+      "分镜比例": { "type": "button-select", "options": ["16:9", "4:3", "1:1", "9:16"], "default": "16:9", "description": "分镜画面比例" }
+    }
+  }
+}

@@ -2,1592 +2,878 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>易榆桥专用 · AI提示词工坊</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProPrompt - AI 提示词生成器</title>
     <style>
         :root {
-            --bg-color: #09090b;
-            --card-bg: #18181b;
-            --header-bg: rgba(9, 9, 11, 0.85);
-            --text-main: #f4f4f5;
-            --text-muted: #a1a1aa;
-            --primary-color: #3b82f6;
-            --primary-hover: #2563eb;
-            --primary-glow: rgba(59, 130, 246, 0.15);
-            --primary-glow-strong: rgba(59, 130, 246, 0.3);
-            --success-color: #10b981;
+            --bg: #09090b;
+            --card-bg: #121214;
+            --input-bg: #1a1a1e;
             --border-color: #27272a;
-            --border-hover: #3f3f46;
-            --input-bg: #09090b;
-            --elevated-bg: #1c1c20;
-            --radius-lg: 16px;
-            --radius-md: 10px;
+            --text-main: #e4e4e7;
+            --text-muted: #71717a;
+            --primary-color: #3b82f6;
+            --success-color: #10b981;
             --radius-sm: 6px;
-            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
-            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --radius-md: 10px;
+            --radius-lg: 14px;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: var(--font-family);
-            background-color: var(--bg-color);
+            background: var(--bg);
             color: var(--text-main);
-            margin: 0;
-            padding: 0;
+            font-family: -apple-system, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-            width: 95%;
-            margin: 0 auto;
+            min-height: 100vh;
+            padding-top: env(safe-area-inset-top);
         }
-
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
-
-        /* ======= HEADER ======= */
         header {
-            width: 100%;
-            background-color: var(--header-bg);
-            backdrop-filter: blur(12px);
-            padding: 10px 32px;
+            padding: 12px 20px;
             border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-            z-index: 100;
+            text-align: center;
             flex-shrink: 0;
-        }
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
         }
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            letter-spacing: 0.3px;
-            color: var(--text-main);
+            background: linear-gradient(90deg, #FFF16A, #FF4066);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
         }
-        .logo-mark {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            color: #fff;
-            font-weight: 900;
-            box-shadow: 0 0 16px var(--primary-glow);
-        }
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .header-version {
-            font-size: 11px;
+        .subtitle {
+            font-size: 0.78rem;
             color: var(--text-muted);
-            background: var(--elevated-bg);
-            padding: 5px 12px;
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
+            margin-top: 4px;
         }
-        .btn-primary {
-            padding: 8px 20px;
-            border-radius: 50px;
-            border: 1px solid var(--primary-color);
-            background: var(--primary-color);
-            color: #fff;
-            font-size: 0.9rem;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            font-family: var(--font-family);
-        }
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            border-color: var(--primary-hover);
-            box-shadow: 0 4px 16px var(--primary-glow-strong);
-        }
-
-        /* ======= TAB BAR (like target's weather bar) ======= */
-        .tab-bar {
-            width: 100%;
-            background: var(--bg-color);
-            border-bottom: 1px solid var(--border-color);
-            padding: 8px 32px;
+        .weather-bar {
             display: flex;
             gap: 8px;
-            flex-shrink: 0;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
         }
-        .tab-btn {
-            padding: 8px 16px;
-            border-radius: 50px;
+        .weather-btn {
+            padding: 6px 16px;
+            border-radius: 100px;
             border: 1px solid var(--border-color);
             background: var(--card-bg);
-            color: var(--text-main);
-            font-size: 0.85rem;
+            color: var(--text-muted);
             cursor: pointer;
+            font-size: 0.8rem;
             transition: 0.2s;
-            white-space: nowrap;
-            font-family: var(--font-family);
-            font-weight: 500;
         }
-        .tab-btn:hover {
-            border-color: var(--primary-color);
+        .weather-btn.active {
+            background: rgba(59, 130, 246, 0.15);
             color: var(--primary-color);
-        }
-        .tab-btn.active {
-            background: var(--primary-color);
-            color: #fff;
             border-color: var(--primary-color);
-            font-weight: 600;
         }
-
-        /* ======= MAIN LAYOUT ======= */
+        .weather-btn:hover { border-color: #52525b; }
+        .weather-btn.custom { border-style: dashed; }
         main {
             display: flex;
             flex: 1;
+            gap: 20px;
+            padding: 16px 20px;
             overflow: hidden;
-            min-height: 0;
-            padding: 24px 40px;
-            padding-bottom: max(24px, env(safe-area-inset-bottom));
-            gap: 32px;
-            box-sizing: border-box;
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
         }
-
         #left-panel {
             flex: 1;
+            padding-right: 8px;
             overflow-y: auto;
-            padding-right: 10px;
             min-height: 0;
-            -webkit-overflow-scrolling: touch;
         }
-
+        #right-panel {
+            width: 340px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+        }
+        .tab-bar {
+            display: flex;
+            gap: 4px;
+            background: var(--card-bg);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+        .tab-btn {
+            padding: 8px 14px;
+            font-size: 0.82rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+        .tab-btn.active { background: var(--primary-color); color: #fff; }
+        .tab-btn:hover { color: var(--text-main); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
         .section-title {
             font-size: 1rem;
             font-weight: 600;
-            margin: 24px 0 16px 0;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-size: 0.8rem;
+            gap: 6px;
         }
-        .section-title:first-child { margin-top: 0; }
-
-        /* ======= CARD GRID ======= */
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 16px;
-            align-items: stretch;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 28px;
         }
-
-        @media (max-width: 1500px) { .grid-container { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-        @media (max-width: 1100px) { .grid-container { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-        @media (max-width: 640px) { .grid-container { grid-template-columns: minmax(0, 1fr); } }
-
+        @media (max-width: 750px) { .grid-container { grid-template-columns: minmax(0, 1fr); } }
+        @media (max-width: 900px) {
+            main { flex-direction: column; padding: 12px 16px; gap: 16px; }
+            #left-panel { flex: 0 0 auto; overflow: visible; padding-right: 0; }
+            #right-panel { width: 100%; max-height: none; min-height: 0; }
+        }
         .card {
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            transition: border-color 0.2s var(--ease);
+            gap: 10px;
+            border: 1px solid var(--border-color);
+            transition: 0.2s;
         }
-        .card:hover {
-            border-color: var(--border-hover);
-        }
+        .card:hover { border-color: #3f3f46; }
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 8px;
         }
         .card-title-group {
-            flex: 1;
-            min-width: 0;
-        }
-        .card-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-main);
-            display: block;
-        }
-        .card-description {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-            line-height: 1.3;
-        }
-        .selected-value {
-            font-size: 0.7rem;
-            color: var(--primary-color);
-            background: rgba(59, 130, 246, 0.1);
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-top: 4px;
-            display: inline-block;
-            font-weight: 500;
-        }
-        .selected-value.empty {
-            color: var(--text-muted);
-            background: transparent;
-            padding: 2px 0;
-        }
-
-        /* ======= PILL BUTTONS (like target) ======= */
-        .pill-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .pill-group-single { }
-        .pill-label {
-            cursor: pointer;
-            user-select: none;
-        }
-        .pill-label input { display: none; }
-        .pill-text {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 50px;
-            border: 1px solid var(--border-color);
-            background: var(--input-bg);
-            color: var(--text-muted);
-            font-size: 0.78rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: var(--font-family);
-        }
-        .pill-label input:checked + .pill-text {
-            background: rgba(59, 130, 246, 0.15);
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-        .pill-text:hover {
-            border-color: var(--border-hover);
-            color: var(--text-main);
-        }
-        .pill-text.add-custom {
-            border-style: dashed;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-
-        /* ======= SWITCH ======= */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 22px;
-            flex-shrink: 0;
-        }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 22px;
-            transition: 0.3s;
-        }
-        .slider:before {
-            content: "";
-            position: absolute;
-            height: 14px;
-            width: 14px;
-            left: 3px;
-            bottom: 3px;
-            background: var(--text-muted);
-            border-radius: 50%;
-            transition: 0.3s;
-        }
-        input:checked + .slider {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: var(--primary-color);
-        }
-        input:checked + .slider:before {
-            transform: translateX(18px);
-            background: var(--primary-color);
-        }
-
-        /* ======= SELECT ======= */
-        select.card-select {
-            width: 100%;
-            padding: 8px 12px;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            color: var(--text-main);
-            font-size: 0.82rem;
-            font-family: var(--font-family);
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a1a1aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            padding-right: 30px;
-            transition: border-color 0.2s;
-        }
-        select.card-select:hover { border-color: var(--border-hover); }
-        select.card-select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--primary-glow);
-        }
-
-        /* ======= TEXT INPUT ======= */
-        input.card-input, textarea.card-input {
-            width: 100%;
-            padding: 8px 12px;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            color: var(--text-main);
-            font-size: 0.82rem;
-            font-family: var(--font-family);
-            transition: border-color 0.2s;
-        }
-        input.card-input::placeholder, textarea.card-input::placeholder { color: var(--text-muted); }
-        input.card-input:focus, textarea.card-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--primary-glow);
-        }
-        textarea.card-input {
-            resize: vertical;
-            min-height: 60px;
-            line-height: 1.6;
-        }
-
-        /* ======= RIGHT PANEL ======= */
-        #right-panel {
-            width: 420px;
-            flex-shrink: 0;
             display: flex;
             flex-direction: column;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            min-height: 0;
-        }
-        .preview-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 18px;
-            background: var(--elevated-bg);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .preview-header h3 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .preview-actions {
-            display: flex;
-            gap: 6px;
-        }
-        .copy-btn {
-            padding: 6px 14px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text-muted);
-            font-size: 0.78rem;
-            cursor: pointer;
-            transition: 0.2s;
-            font-family: var(--font-family);
-            display: flex;
-            align-items: center;
             gap: 4px;
         }
-        .copy-btn:hover {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            background: rgba(59, 130, 246, 0.08);
-        }
-        .copy-btn.copy-main {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-            color: #fff;
-            font-weight: 600;
-        }
-        .copy-btn.copy-main:hover {
-            background: var(--primary-hover);
-        }
-
-        #preview-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            min-height: 0;
-        }
-
-        .prompt-output-tab {
+        .card-label { font-size: 0.88rem; font-weight: 600; }
+        .card-description { font-size: 0.73rem; color: var(--text-muted); line-height: 1.4; }
+        .selected-value { font-size: 0.7rem; padding: 2px 8px; border-radius: 100px; font-weight: 500; color: var(--primary-color); background: rgba(59, 130, 246, 0.12); }
+        .selected-value.empty { color: var(--text-muted); background: rgba(255,255,255,0.05); }
+        select, input[type="text"] {
             background: var(--input-bg);
+            color: var(--text-main);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 14px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            width: 100%;
+            outline: none;
+        }
+        select:focus, input[type="text"]:focus { border-color: var(--primary-color); }
+        .pill-group { display: flex; flex-wrap: wrap; gap: 6px; }
+        .pill-label { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+        .pill-label input[type="checkbox"], .pill-label input[type="radio"] {
+            appearance: none; -webkit-appearance: none; position: absolute;
+            width: 0; height: 0; opacity: 0; margin: 0; padding: 0; border: 0; pointer-events: none;
+        }
+        .pill-text {
+            display: inline-block;
+            background: var(--input-bg);
+            color: var(--text-muted);
+            padding: 5px 10px;
+            border-radius: 100px;
             font-size: 0.78rem;
-            line-height: 1.8;
-            color: var(--text-muted);
-            white-space: pre-wrap;
-            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
-            min-height: 120px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .json-output-tab {
-            background: var(--input-bg);
+            cursor: pointer;
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 14px;
-            font-size: 0.75rem;
-            line-height: 1.6;
-            color: var(--text-muted);
-            white-space: pre-wrap;
-            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
-            min-height: 300px;
-            max-height: 500px;
-            overflow-y: auto;
         }
-
-        .reverse-prompt-section {
-            margin-top: 14px;
-            padding-top: 14px;
-            border-top: 1px solid var(--border-color);
+        .pill-label input:checked + .pill-text {
+            background: rgba(168, 85, 247, 0.18);
+            color: #d8b4fe;
+            border-color: #a855f7;
         }
-        .reverse-prompt-section label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            display: block;
-            margin-bottom: 6px;
+        .switch { position: relative; display: inline-block; width: 38px; height: 19px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background: #27272a; transition: .3s; border-radius: 19px;
         }
-        .reverse-text {
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 12px;
-            font-size: 0.73rem;
-            line-height: 1.7;
-            color: var(--text-muted);
-            white-space: pre-wrap;
-            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
-            max-height: 120px;
-            overflow-y: auto;
+        .slider:before {
+            position: absolute; content: ""; height: 13px; width: 13px;
+            left: 3px; bottom: 3px; background: #a1a1aa; transition: .3s; border-radius: 50%;
         }
-
-        /* ======= HIDDEN ADDER ======= */
-        .hidden-adder {
-            display: none;
-            gap: 6px;
-            margin-top: 6px;
-            align-items: center;
-        }
-        .hidden-adder.active {
+        input:checked + .slider { background: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(19px); background: #fff; }
+        .hidden-adder { display: none; gap: 6px; margin-top: 6px; }
+        .hidden-adder.active { display: flex; }
+        .preview-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
-        .hidden-adder input {
-            flex: 1;
-            padding: 6px 10px;
-            background: var(--input-bg);
+        .preview-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+        .output-tabs { display: flex; gap: 4px; margin-bottom: 0; }
+        .out-tab-btn {
+            padding: 4px 10px;
+            font-size: 0.7rem;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
-            color: var(--text-main);
-            font-size: 0.78rem;
-            font-family: var(--font-family);
+            background: var(--card-bg);
+            color: var(--text-muted);
+            cursor: pointer;
         }
-
-        /* ======= TOAST ======= */
+        .out-tab-btn.active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+        .copy-btn {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: 0.2s;
+        }
+        .copy-btn:hover { border-color: #52525b; }
+        #preview-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background: #0c0c0e;
+            min-height: 0;
+            max-height: 50vh;
+        }
+        pre {
+            margin: 0;
+            font-family: "Menlo", "Cascadia Code", monospace;
+            font-size: 0.7rem;
+            color: #a6accd;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .reverse-box {
+            padding: 12px 16px;
+            font-size: 0.65rem;
+            color: #71717a;
+            border-top: 1px solid var(--border-color);
+            background: #0a0a0c;
+            line-height: 1.5;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+        .panel-wechat {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding-top: 8px;
+            margin-top: 8px;
+            border-top: 1px solid var(--border-color);
+        }
+        .wechat-btn { background: rgba(16,185,129,0.1); color: var(--success-color); border-color: rgba(16,185,129,0.2); }
         .toast {
             position: fixed;
-            bottom: 36px;
+            bottom: 24px;
             left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: var(--elevated-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 10px 24px;
+            transform: translateX(-50%);
+            background: var(--primary-color);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 100px;
             font-size: 0.82rem;
-            color: var(--text-main);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 99999;
+            z-index: 999;
             pointer-events: none;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+        .toast.show { opacity: 1; }
 
-        /* ======= STORYBOARD DROP ZONE ======= */
-        #sbDropZone {
-            border: 2px dashed var(--border-color) !important;
-            padding: 20px;
-            text-align: center;
+        /* Storyboard */
+        .sb-drop-zone {
+            border: 2px dashed var(--border-color);
             border-radius: var(--radius-md);
+            padding: 24px;
+            text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: 0.2s;
             color: var(--text-muted);
             font-size: 0.85rem;
         }
-        #sbDropZone:hover {
-            border-color: var(--primary-color) !important;
-            background: var(--elevated-bg);
-        }
-        #sbPreview {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
+        .sb-drop-zone:hover { border-color: #52525b; }
+        .sb-preview { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
-
-        /* ======= COLLECTION LIST ======= */
-        .collection-list { margin-top: 12px; }
+        /* Collections */
         .collection-item {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
-            background: var(--elevated-bg);
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.78rem;
+            gap: 8px;
+        }
+        .collection-item span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .collection-item button {
+            padding: 3px 8px;
+            font-size: 0.65rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            background: var(--input-bg);
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+        .collection-item button:hover { background: var(--primary-color); color: #fff; }
+
+        /* Dec decompile textarea */
+        .dec-output {
+            width: 100%;
+            min-height: 120px;
+            background: var(--input-bg);
+            color: var(--text-main);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
-            margin-bottom: 6px;
+            padding: 10px;
+            font-family: "Menlo", monospace;
+            font-size: 0.7rem;
+            resize: vertical;
+            margin-top: 8px;
+        }
+        textarea.card-input {
+            background: var(--input-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
             font-size: 0.82rem;
-            color: var(--text-muted);
-            transition: all 0.2s;
+            width: 100%;
+            resize: vertical;
         }
-        .collection-item:hover { border-color: var(--border-hover); }
-        .collection-item button {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 0.78rem;
-            cursor: pointer;
-            padding: 3px 10px;
-            border-radius: 5px;
-            transition: all 0.2s;
-            font-family: var(--font-family);
-        }
-        .collection-item button:hover {
-            color: var(--primary-color);
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        /* ======= RESPONSIVE ======= */
-        @media (max-width: 900px) {
-            body { width: 100%; }
-            main {
-                flex-direction: column;
-                flex: 1;
-                min-height: 0;
-                overflow-y: auto;
-                padding: 12px 16px;
-                gap: 16px;
-            }
-            #left-panel { flex: 0 0 auto; padding-right: 0; overflow: visible; }
-            #right-panel {
-                width: 100%;
-                flex: 0 0 auto;
-                margin-top: 0;
-                max-height: none;
-                min-height: 0;
-                border-radius: var(--radius-lg);
-            }
-            #preview-content { flex: none; min-height: 120px; max-height: min(55vh, 480px); overflow-y: auto; padding: 12px 14px; }
-            header { padding: 10px 14px; }
-            .tab-bar { padding: 6px 14px; }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .card { animation: fadeInUp 0.4s var(--ease) both; }
-        .card:nth-child(1) { animation-delay: 0.02s; }
-        .card:nth-child(2) { animation-delay: 0.05s; }
-        .card:nth-child(3) { animation-delay: 0.08s; }
-        .card:nth-child(4) { animation-delay: 0.11s; }
-        .card:nth-child(5) { animation-delay: 0.14s; }
-        .card:nth-child(6) { animation-delay: 0.17s; }
-        .card:nth-child(7) { animation-delay: 0.20s; }
-        .card:nth-child(8) { animation-delay: 0.23s; }
-        .card:nth-child(9) { animation-delay: 0.26s; }
-        .card:nth-child(10) { animation-delay: 0.29s; }
-        .card:nth-child(11) { animation-delay: 0.32s; }
-        .card:nth-child(12) { animation-delay: 0.35s; }
     </style>
 </head>
 <body>
+    <header>
+        <div class="logo">ProPrompt · AI 提示词生成器</div>
+        <div class="subtitle">小白零门槛，一键搞定提示词!</div>
+    </header>
 
-<div class="toast" id="toast"></div>
+    <div class="weather-bar" id="weatherBar"></div>
 
-<!-- HEADER -->
-<header>
-    <div class="header-left">
-        <div class="logo">
-            <div class="logo-mark">P</div>
-            易榆桥专用
-        </div>
-        <span style="font-size:0.85rem;color:var(--text-muted);">AI提示词生成工坊</span>
-    </div>
-    <div class="header-actions">
-        <span class="header-version">v3.0</span>
-        <button class="btn-primary" onclick="generatePrompt()">🚀 生成提示词</button>
-    </div>
-</header>
-
-<!-- TAB BAR -->
-<div class="tab-bar" id="tabBar">
-    <button class="tab-btn active" data-tab="scene">🏠 场景与风格</button>
-    <button class="tab-btn" data-tab="light">💡 光照系统</button>
-    <button class="tab-btn" data-tab="camera">📷 相机参数</button>
-    <button class="tab-btn" data-tab="detail">✨ 细节增强</button>
-    <button class="tab-btn" data-tab="constraint">🔒 核心约束</button>
-    <button class="tab-btn" data-tab="storyboard">🎬 分镜制作</button>
-    <button class="tab-btn" data-tab="decompile">🔬 豆包反编译</button>
-    <button class="tab-btn" data-tab="save">💾 收藏与历史</button>
-</div>
-
-<!-- MAIN -->
-<main>
-    <!-- LEFT PANEL -->
-    <div id="left-panel">
-        <div id="tabContainer">
-
-            <!-- TAB: 场景与风格 -->
-            <div class="tab-panel active" id="tab-scene">
-                <div class="section-title">🏠 场景与风格</div>
-                <div class="grid-container">
-                    <!-- 任务类型 -->
-                    <div class="card">
-                        <div class="card-header">
+    <main>
+        <div id="left-panel">
+            <div class="tab-bar" id="tabBar"></div>
+            <div id="tabContent">
+                <div id="dynamicPanels"></div>
+                <!-- Storyboard Panel -->
+                <div class="tab-panel" id="tab-storyboard">
+                    <div class="section-title">🎬 分镜制作</div>
+                    <div class="grid-container">
+                        <div class="card" style="grid-column: span 2;">
                             <div class="card-title-group">
-                                <span class="card-label">任务类型</span>
-                                <span class="selected-value" id="val-taskType">模型→真实摄影</span>
+                                <span class="card-label">参考图片</span>
+                                <p class="card-description">拖拽或点击上传参考图片</p>
                             </div>
+                            <div class="sb-drop-zone" id="sbDropZone" onclick="document.getElementById('sbFileInput').click()">
+                                📁 点击或拖拽图片到此处
+                            </div>
+                            <input type="file" id="sbFileInput" multiple accept="image/*" style="display:none" onchange="handleSbFiles(this.files)">
+                            <div class="sb-preview" id="sbPreview"></div>
                         </div>
-                        <div class="pill-group pill-group-single" id="pills-taskType">
-                            <label class="pill-label"><input type="radio" name="taskType" value="模型→真实摄影" checked onchange="updateRadioVal('taskType',this.value)"><span class="pill-text">模型→真实摄影</span></label>
-                            <label class="pill-label"><input type="radio" name="taskType" value="模型→写实效果图" onchange="updateRadioVal('taskType',this.value)"><span class="pill-text">模型→写实效果图</span></label>
-                            <label class="pill-label"><input type="radio" name="taskType" value="效果图→真实摄影" onchange="updateRadioVal('taskType',this.value)"><span class="pill-text">效果图→真实摄影</span></label>
+                        <div class="card" style="grid-column: span 2;">
+                            <div class="card-title-group">
+                                <span class="card-label">基础提示词</span>
+                            </div>
+                            <textarea class="card-input" id="storyboardPrompt" placeholder="描述你需要实现的效果" style="min-height:80px">专业室内设计摄影</textarea>
                         </div>
                     </div>
-
-                    <!-- 空间类型 -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">空间类型</span>
-                                <span class="selected-value" id="val-spaceType">平层家装</span>
-                            </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-spaceType">
-                            <label class="pill-label"><input type="radio" name="spaceType" value="平层家装室内" checked onchange="updateRadioVal('spaceType',this.value)"><span class="pill-text">平层家装</span></label>
-                            <label class="pill-label"><input type="radio" name="spaceType" value="别墅室内" onchange="updateRadioVal('spaceType',this.value)"><span class="pill-text">别墅</span></label>
-                            <label class="pill-label"><input type="radio" name="spaceType" value="工装办公" onchange="updateRadioVal('spaceType',this.value)"><span class="pill-text">办公工装</span></label>
-                            <label class="pill-label"><input type="radio" name="spaceType" value="餐饮工装" onchange="updateRadioVal('spaceType',this.value)"><span class="pill-text">餐饮工装</span></label>
-                            <label class="pill-label"><input type="radio" name="spaceType" value="酒店工装" onchange="updateRadioVal('spaceType',this.value)"><span class="pill-text">酒店住宿</span></label>
-                            <label class="pill-label"><input type="radio" name="spaceType" value="商业展示" onchange="updateRadioVal('spaceType',this.value)"><span class="pill-text">商业展示</span></label>
-                            <label class="pill-label"><input type="radio" name="spaceType" value="庭院" onchange="updateRadioVal('spaceType',this.value)"><span class="pill-text">庭院</span></label>
-                            <label class="pill-label"><input type="radio" name="spaceType" value="室外门头" onchange="updateRadioVal('spaceType',this.value)"><span class="pill-text">室外门头</span></label>
-                            <label class="pill-label"><input type="radio" name="spaceType" value="别墅外立面" onchange="updateRadioVal('spaceType',this.value)"><span class="pill-text">外立面</span></label>
-                            <label class="pill-label"><input type="radio" name="spaceType" value="产品" onchange="updateRadioVal('spaceType',this.value)"><span class="pill-text">产品</span></label>
-                            <label class="pill-label"><input type="radio" name="spaceType" value="城市建筑" onchange="updateRadioVal('spaceType',this.value)"><span class="pill-text">城市建筑</span></label>
-                            <label class="pill-label"><input type="radio" name="spaceType" value="鸟瞰" onchange="updateRadioVal('spaceType',this.value)"><span class="pill-text">鸟瞰</span></label>
-                            <span class="pill-text add-custom" onclick="toggleAdder('spaceType')">+ 自定义</span>
-                        </div>
-                        <div class="hidden-adder" id="adder-spaceType">
-                            <input type="text" id="input-spaceType" placeholder="输入自定义空间类型">
-                            <button class="copy-btn" style="background:var(--primary-color);color:#fff" onclick="saveCustomRadio('spaceType')">确定</button>
-                        </div>
-                    </div>
-
-                    <!-- 设计风格 -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">设计风格</span>
-                                <span class="selected-value" id="val-designStyle">现代室内设计（通用）</span>
-                            </div>
-                        </div>
-                        <select class="card-select" id="designStyle" onchange="updateSelectVal('designStyle',this.value)">
-                            <option>现代室内设计（通用）</option>
-                            <option>现代简约风</option>
-                            <option>现代极简主义</option>
-                            <option>现代轻奢风</option>
-                            <option>意式极简</option>
-                            <option>新中式</option>
-                            <option>宋式新中式</option>
-                            <option>禅意新中式</option>
-                            <option>轻法式</option>
-                            <option>古典法式</option>
-                            <option>奶油风</option>
-                            <option>侘寂风</option>
-                            <option>现代北欧</option>
-                            <option>原木北欧</option>
-                            <option>现代日式</option>
-                            <option>原木日式</option>
-                            <option>美式风格</option>
-                            <option>包豪斯风格</option>
-                            <option>地中海风格</option>
-                            <option>工业风</option>
-                            <option value="__ADD_NEW__">➕ 自定义</option>
-                        </select>
-                        <div class="hidden-adder" id="adder-designStyle">
-                            <input type="text" id="input-designStyle" placeholder="输入自定义风格">
-                            <button class="copy-btn" style="background:var(--primary-color);color:#fff" onclick="saveCustomSelect('designStyle')">确定</button>
-                        </div>
-                    </div>
-
-                    <!-- 外景类型 -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">外景类型</span>
-                                <span class="selected-value empty" id="val-outdoorScene">无指定</span>
-                            </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-outdoorScene">
-                            <label class="pill-label"><input type="radio" name="outdoorScene" value="" checked onchange="updateRadioVal('outdoorScene',this.value)"><span class="pill-text">无指定</span></label>
-                            <label class="pill-label"><input type="radio" name="outdoorScene" value="城市天际线" onchange="updateRadioVal('outdoorScene',this.value)"><span class="pill-text">天际线</span></label>
-                            <label class="pill-label"><input type="radio" name="outdoorScene" value="海景" onchange="updateRadioVal('outdoorScene',this.value)"><span class="pill-text">海景</span></label>
-                            <label class="pill-label"><input type="radio" name="outdoorScene" value="江景" onchange="updateRadioVal('outdoorScene',this.value)"><span class="pill-text">江景</span></label>
-                            <label class="pill-label"><input type="radio" name="outdoorScene" value="山景" onchange="updateRadioVal('outdoorScene',this.value)"><span class="pill-text">山景</span></label>
-                            <label class="pill-label"><input type="radio" name="outdoorScene" value="庭院绿植" onchange="updateRadioVal('outdoorScene',this.value)"><span class="pill-text">庭院绿植</span></label>
-                            <label class="pill-label"><input type="radio" name="outdoorScene" value="小区外景" onchange="updateRadioVal('outdoorScene',this.value)"><span class="pill-text">小区外景</span></label>
-                            <label class="pill-label"><input type="radio" name="outdoorScene" value="城市夜景" onchange="updateRadioVal('outdoorScene',this.value)"><span class="pill-text">城市夜景</span></label>
-                        </div>
-                    </div>
-
-                    <!-- 地点 -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">地点</span>
-                                <span class="selected-value empty" id="val-location">自动</span>
-                            </div>
-                        </div>
-                        <select class="card-select" id="location" onchange="updateSelectVal('location',this.value)">
-                            <option value="">自动</option>
-                            <option>哈尔滨</option><option>北京</option><option>上海</option>
-                            <option>杭州</option><option>南京</option><option>长沙</option>
-                            <option>成都</option><option>重庆</option><option>广州</option>
-                            <option>海口</option>
-                        </select>
-                    </div>
-
-                    <!-- 季节 -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">季节</span>
-                                <span class="selected-value empty" id="val-season">自动</span>
-                            </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-season">
-                            <label class="pill-label"><input type="radio" name="season" value="" checked onchange="updateRadioVal('season',this.value)"><span class="pill-text">自动</span></label>
-                            <label class="pill-label"><input type="radio" name="season" value="春季" onchange="updateRadioVal('season',this.value)"><span class="pill-text">春</span></label>
-                            <label class="pill-label"><input type="radio" name="season" value="夏季" onchange="updateRadioVal('season',this.value)"><span class="pill-text">夏</span></label>
-                            <label class="pill-label"><input type="radio" name="season" value="秋季" onchange="updateRadioVal('season',this.value)"><span class="pill-text">秋</span></label>
-                            <label class="pill-label"><input type="radio" name="season" value="冬季" onchange="updateRadioVal('season',this.value)"><span class="pill-text">冬</span></label>
-                        </div>
-                    </div>
-
-                    <!-- 自定义风格描述 -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">自定义风格描述</span>
-                                <span class="selected-value empty" id="val-customStyle">未填</span>
-                            </div>
-                        </div>
-                        <input class="card-input" id="customStyle" placeholder="风格描述 例：现代轻奢客厅" oninput="updateTextVal('customStyle',this.value)">
-                    </div>
-
-                    <!-- 补充描述 -->
-                    <div class="card" style="grid-column: span 2;">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">补充描述</span>
-                                <span class="selected-value empty" id="val-customDesc">未填</span>
-                            </div>
-                        </div>
-                        <textarea class="card-input" id="customDesc" placeholder="其他补充描述（材质、氛围等）" oninput="updateTextVal('customDesc',this.value)" style="min-height:70px"></textarea>
+                    <div style="margin-top:12px">
+                        <button class="copy-btn" style="background:var(--primary-color);color:#fff;padding:10px 24px;font-size:0.85rem" onclick="generateStoryboard()">生成分镜提示词 & 打开豆包</button>
                     </div>
                 </div>
-            </div>
 
-            <!-- TAB: 光照系统 -->
-            <div class="tab-panel" id="tab-light">
-                <div class="section-title">💡 光照系统</div>
-                <div class="grid-container">
-                    <div class="card">
-                        <div class="card-header">
+                <!-- Doubao Decompile Panel -->
+                <div class="tab-panel" id="tab-doubao">
+                    <div class="section-title">🔍 豆包指令反解</div>
+                    <div class="grid-container">
+                        <div class="card" style="grid-column: span 2;">
                             <div class="card-title-group">
-                                <span class="card-label">天气</span>
-                                <span class="selected-value" id="val-weather">晴天</span>
+                                <span class="card-label">豆包分析指令</span>
+                                <p class="card-description">粘贴豆包/其他AI生成的参考参数，自动反解出JSON模板</p>
                             </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-weather">
-                            <label class="pill-label"><input type="radio" name="weather" value="晴天" checked onchange="updateRadioVal('weather',this.value)"><span class="pill-text">晴天</span></label>
-                            <label class="pill-label"><input type="radio" name="weather" value="阴天" onchange="updateRadioVal('weather',this.value)"><span class="pill-text">阴天</span></label>
-                            <label class="pill-label"><input type="radio" name="weather" value="多云" onchange="updateRadioVal('weather',this.value)"><span class="pill-text">多云</span></label>
-                            <label class="pill-label"><input type="radio" name="weather" value="雾天" onchange="updateRadioVal('weather',this.value)"><span class="pill-text">雾天</span></label>
-                            <label class="pill-label"><input type="radio" name="weather" value="雨天" onchange="updateRadioVal('weather',this.value)"><span class="pill-text">雨天</span></label>
-                            <label class="pill-label"><input type="radio" name="weather" value="雪天" onchange="updateRadioVal('weather',this.value)"><span class="pill-text">雪天</span></label>
+                            <textarea class="card-input" id="doubaoPrompt" placeholder="粘贴豆包或其他AI生成的参数..." style="min-height:100px"></textarea>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">时间段</span>
-                                <span class="selected-value" id="val-timeOfDay">上午9点</span>
-                            </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-timeOfDay">
-                            <label class="pill-label"><input type="radio" name="timeOfDay" value="清晨6点" onchange="updateRadioVal('timeOfDay',this.value)"><span class="pill-text">清晨6点</span></label>
-                            <label class="pill-label"><input type="radio" name="timeOfDay" value="上午9点" checked onchange="updateRadioVal('timeOfDay',this.value)"><span class="pill-text">上午9点</span></label>
-                            <label class="pill-label"><input type="radio" name="timeOfDay" value="中午12点" onchange="updateRadioVal('timeOfDay',this.value)"><span class="pill-text">中午12点</span></label>
-                            <label class="pill-label"><input type="radio" name="timeOfDay" value="下午15点" onchange="updateRadioVal('timeOfDay',this.value)"><span class="pill-text">下午15点</span></label>
-                            <label class="pill-label"><input type="radio" name="timeOfDay" value="夕阳17点" onchange="updateRadioVal('timeOfDay',this.value)"><span class="pill-text">夕阳17点</span></label>
-                            <label class="pill-label"><input type="radio" name="timeOfDay" value="夜晚20点" onchange="updateRadioVal('timeOfDay',this.value)"><span class="pill-text">夜晚20点</span></label>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">天空光</span>
-                                <span class="selected-value" id="val-skyLight">晴天自然光</span>
-                            </div>
-                        </div>
-                        <select class="card-select" id="skyLight" onchange="updateSelectVal('skyLight',this.value)">
-                            <option>晴天自然光</option><option>阴天漫射光</option><option>多云柔光</option><option>雨天冷光</option>
-                        </select>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">室内灯光</span>
-                                <span class="selected-value" id="val-indoorLight">日常照明模式</span>
-                            </div>
-                        </div>
-                        <select class="card-select" id="indoorLight" onchange="updateSelectVal('indoorLight',this.value)">
-                            <option value="仅自然光">仅自然光</option><option value="日常照明模式" selected>日常照明模式</option>
-                            <option value="全开工作模式">全开工作模式</option><option value="场景氛围模式">场景氛围模式</option>
-                            <option value="仅氛围灯">仅氛围灯</option>
-                        </select>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">色温</span>
-                                <span class="selected-value" id="val-colorTemp">中性光（4500K）</span>
-                            </div>
-                        </div>
-                        <select class="card-select" id="colorTemp" onchange="updateSelectVal('colorTemp',this.value)">
-                            <option>中性光（4500K）</option><option>冷白光（6000K）</option>
-                            <option>暖白光（3500K）</option><option>暖黄光（2800K）</option>
-                        </select>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">太阳光影</span>
-                                <span class="selected-value" id="val-sunLight">无直射阳光</span>
-                            </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-sunLight">
-                            <label class="pill-label"><input type="radio" name="sunLight" value="无直射阳光" checked onchange="updateRadioVal('sunLight',this.value)"><span class="pill-text">无直射阳光</span></label>
-                            <label class="pill-label"><input type="radio" name="sunLight" value="香格里拉帘光影" onchange="updateRadioVal('sunLight',this.value)"><span class="pill-text">香格里拉帘光影</span></label>
-                            <label class="pill-label"><input type="radio" name="sunLight" value="纱帘光影" onchange="updateRadioVal('sunLight',this.value)"><span class="pill-text">纱帘光影</span></label>
-                            <label class="pill-label"><input type="radio" name="sunLight" value="树影斑驳" onchange="updateRadioVal('sunLight',this.value)"><span class="pill-text">树影斑驳</span></label>
-                            <label class="pill-label"><input type="radio" name="sunLight" value="丁达尔效应" onchange="updateRadioVal('sunLight',this.value)"><span class="pill-text">丁达尔效应</span></label>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">窗帘类型</span>
-                                <span class="selected-value" id="val-curtainType">默认图中类型</span>
-                            </div>
-                        </div>
-                        <select class="card-select" id="curtainType" onchange="updateSelectVal('curtainType',this.value)">
-                            <option>默认图中类型</option><option>单层纱帘（关闭）</option><option>单层纱帘（打开）</option>
-                            <option>双层窗帘（打开）</option><option>香格里拉帘</option><option>梦幻帘</option>
-                        </select>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">后期色调</span>
-                                <span class="selected-value" id="val-toneStyle">原生中性微暖色调</span>
-                            </div>
-                        </div>
-                        <select class="card-select" id="toneStyle" onchange="updateSelectVal('toneStyle',this.value)">
-                            <option>原生中性微暖色调</option><option>暖调纪实级色调</option>
-                            <option>冷调纪实级色调</option><option>电影胶片级调色</option><option>自然通透</option>
-                        </select>
+                    <textarea class="dec-output" id="decTemplateOutput" placeholder="点击下方按钮生成JSON提示词模板">点击下方按钮生成JSON提示词模板</textarea>
+                    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+                        <button class="copy-btn" style="background:var(--primary-color);color:#fff" onclick="decGenerateTemplate()">生成JSON模板</button>
+                        <button class="copy-btn" onclick="decCopyTemplate()">复制模板</button>
+                        <button class="copy-btn" style="background:var(--success-color);color:#fff" onclick="decCopyAndOpen()">复制并打开豆包</button>
                     </div>
                 </div>
-            </div>
 
-            <!-- TAB: 相机参数 -->
-            <div class="tab-panel" id="tab-camera">
-                <div class="section-title">📷 相机参数</div>
-                <div class="grid-container">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">相机型号</span>
-                                <span class="selected-value" id="val-cameraModel">iPhone 17 Pro Max</span>
-                            </div>
-                        </div>
-                        <select class="card-select" id="cameraModel" onchange="updateSelectVal('cameraModel',this.value)">
-                            <option>iPhone 17 Pro Max</option><option>佳能 EOS R5</option><option>索尼 A7R5</option>
-                            <option>尼康 Z9</option><option>哈苏 X2D 100C</option><option>富士 GFX 100S</option>
-                            <option>徕卡 M11</option><option>华为 Mate 70 Pro</option>
-                        </select>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">光圈</span>
-                                <span class="selected-value" id="val-aperture">f/5.6</span>
-                            </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-aperture">
-                            <label class="pill-label"><input type="radio" name="aperture" value="f/1.4" onchange="updateRadioVal('aperture',this.value)"><span class="pill-text">f/1.4</span></label>
-                            <label class="pill-label"><input type="radio" name="aperture" value="f/2.8" onchange="updateRadioVal('aperture',this.value)"><span class="pill-text">f/2.8</span></label>
-                            <label class="pill-label"><input type="radio" name="aperture" value="f/4" onchange="updateRadioVal('aperture',this.value)"><span class="pill-text">f/4</span></label>
-                            <label class="pill-label"><input type="radio" name="aperture" value="f/5.6" checked onchange="updateRadioVal('aperture',this.value)"><span class="pill-text">f/5.6</span></label>
-                            <label class="pill-label"><input type="radio" name="aperture" value="f/8" onchange="updateRadioVal('aperture',this.value)"><span class="pill-text">f/8</span></label>
-                            <label class="pill-label"><input type="radio" name="aperture" value="f/11" onchange="updateRadioVal('aperture',this.value)"><span class="pill-text">f/11</span></label>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">焦距</span>
-                                <span class="selected-value" id="val-focalLength">24mm</span>
-                            </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-focalLength">
-                            <label class="pill-label"><input type="radio" name="focalLength" value="16mm" onchange="updateRadioVal('focalLength',this.value)"><span class="pill-text">16mm</span></label>
-                            <label class="pill-label"><input type="radio" name="focalLength" value="24mm" checked onchange="updateRadioVal('focalLength',this.value)"><span class="pill-text">24mm</span></label>
-                            <label class="pill-label"><input type="radio" name="focalLength" value="35mm" onchange="updateRadioVal('focalLength',this.value)"><span class="pill-text">35mm</span></label>
-                            <label class="pill-label"><input type="radio" name="focalLength" value="50mm" onchange="updateRadioVal('focalLength',this.value)"><span class="pill-text">50mm</span></label>
-                            <label class="pill-label"><input type="radio" name="focalLength" value="85mm" onchange="updateRadioVal('focalLength',this.value)"><span class="pill-text">85mm</span></label>
-                            <label class="pill-label"><input type="radio" name="focalLength" value="135mm" onchange="updateRadioVal('focalLength',this.value)"><span class="pill-text">135mm</span></label>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">ISO</span>
-                                <span class="selected-value" id="val-iso">ISO 100</span>
-                            </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-iso">
-                            <label class="pill-label"><input type="radio" name="iso" value="ISO 50" onchange="updateRadioVal('iso',this.value)"><span class="pill-text">ISO 50</span></label>
-                            <label class="pill-label"><input type="radio" name="iso" value="ISO 100" checked onchange="updateRadioVal('iso',this.value)"><span class="pill-text">ISO 100</span></label>
-                            <label class="pill-label"><input type="radio" name="iso" value="ISO 200" onchange="updateRadioVal('iso',this.value)"><span class="pill-text">ISO 200</span></label>
-                            <label class="pill-label"><input type="radio" name="iso" value="ISO 400" onchange="updateRadioVal('iso',this.value)"><span class="pill-text">ISO 400</span></label>
-                            <label class="pill-label"><input type="radio" name="iso" value="ISO 800" onchange="updateRadioVal('iso',this.value)"><span class="pill-text">ISO 800</span></label>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">快门</span>
-                                <span class="selected-value" id="val-shutter">1s</span>
-                            </div>
-                            </div>
-                        <div class="pill-group pill-group-single" id="pills-shutter">
-                            <label class="pill-label"><input type="radio" name="shutter" value="1/1000s" onchange="updateRadioVal('shutter',this.value)"><span class="pill-text">1/1000s</span></label>
-                            <label class="pill-label"><input type="radio" name="shutter" value="1/250s" onchange="updateRadioVal('shutter',this.value)"><span class="pill-text">1/250s</span></label>
-                            <label class="pill-label"><input type="radio" name="shutter" value="1/30s" onchange="updateRadioVal('shutter',this.value)"><span class="pill-text">1/30s</span></label>
-                            <label class="pill-label"><input type="radio" name="shutter" value="1s" checked onchange="updateRadioVal('shutter',this.value)"><span class="pill-text">1s</span></label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: 细节增强 -->
-            <div class="tab-panel" id="tab-detail">
-                <div class="section-title">✨ 细节增强</div>
-                <div class="grid-container">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">分辨率</span>
-                                <span class="selected-value" id="val-resolution">8K</span>
-                            </div>
-                        </div>
-                        <select class="card-select" id="resolution" onchange="updateSelectVal('resolution',this.value)">
-                            <option>8K</option><option>4K</option><option>2K</option><option>1080p</option>
-                        </select>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">画面比例</span>
-                                <span class="selected-value" id="val-aspectRatio">保持原图</span>
-                            </div>
-                        </div>
-                        <select class="card-select" id="aspectRatio" onchange="updateSelectVal('aspectRatio',this.value)">
-                            <option>保持原图</option><option>16:9</option><option>4:3</option><option>3:2</option>
-                            <option>1:1</option><option>9:16</option>
-                        </select>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">PBR写实材质</span>
-                                <span class="selected-value empty" id="val-materialEnhance">关</span>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" id="materialEnhance" onchange="updateSwitchVal('materialEnhance',this.checked)">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <p class="card-description">启用物理渲染级材质增强</p>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">光线追踪反射</span>
-                                <span class="selected-value empty" id="val-raytrace">关</span>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" id="raytrace" onchange="updateSwitchVal('raytrace',this.checked)">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <p class="card-description">启用高精度光线追踪</p>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">HDR包围曝光</span>
-                                <span class="selected-value empty" id="val-techHdr">关</span>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" id="techHdr" onchange="updateSwitchVal('techHdr',this.checked)">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">三脚架长曝</span>
-                                <span class="selected-value empty" id="val-techTripod">关</span>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" id="techTripod" onchange="updateSwitchVal('techTripod',this.checked)">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">移轴矫正</span>
-                                <span class="selected-value empty" id="val-techTilt">关</span>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" id="techTilt" onchange="updateSwitchVal('techTilt',this.checked)">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">胶片颗粒质感</span>
-                                <span class="selected-value empty" id="val-filmGrain">关</span>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" id="filmGrain" onchange="updateSwitchVal('filmGrain',this.checked)">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: 核心约束 -->
-            <div class="tab-panel" id="tab-constraint">
-                <div class="section-title">🔒 核心约束</div>
-                <div class="grid-container">
-                    <div class="card" style="grid-column: span 2;">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">几何保真度</span>
-                                <span class="selected-value" id="val-geomFidelity">强制几何保真</span>
-                            </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-geomFidelity">
-                            <label class="pill-label"><input type="radio" name="geomFidelity" value="强制几何保真" checked onchange="updateRadioVal('geomFidelity',this.value)"><span class="pill-text">强制几何保真</span></label>
-                            <label class="pill-label"><input type="radio" name="geomFidelity" value="严格结构保持" onchange="updateRadioVal('geomFidelity',this.value)"><span class="pill-text">严格结构保持</span></label>
-                            <label class="pill-label"><input type="radio" name="geomFidelity" value="基础轮廓保持" onchange="updateRadioVal('geomFidelity',this.value)"><span class="pill-text">基础轮廓保持</span></label>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">材质一致性</span>
-                                <span class="selected-value" id="val-materialConsistency">完全还原材质</span>
-                            </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-materialConsistency">
-                            <label class="pill-label"><input type="radio" name="materialConsistency" value="完全还原材质" checked onchange="updateRadioVal('materialConsistency',this.value)"><span class="pill-text">完全还原</span></label>
-                            <label class="pill-label"><input type="radio" name="materialConsistency" value="保持大类材质" onchange="updateRadioVal('materialConsistency',this.value)"><span class="pill-text">保持大类</span></label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: 分镜制作 -->
-            <div class="tab-panel" id="tab-storyboard">
-                <div class="section-title">🎬 分镜制作</div>
-                <div class="grid-container">
-                    <div class="card" style="grid-column: span 2;">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">分镜模式</span>
-                                <span class="selected-value" id="val-storyGrid">4宫格</span>
-                            </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-storyGrid">
-                            <label class="pill-label"><input type="radio" name="storyGrid" value="2" onchange="updateRadioVal('storyGrid',this.value)"><span class="pill-text">2宫格</span></label>
-                            <label class="pill-label"><input type="radio" name="storyGrid" value="4" checked onchange="updateRadioVal('storyGrid',this.value)"><span class="pill-text">4宫格</span></label>
-                            <label class="pill-label"><input type="radio" name="storyGrid" value="6" onchange="updateRadioVal('storyGrid',this.value)"><span class="pill-text">6宫格</span></label>
-                            <label class="pill-label"><input type="radio" name="storyGrid" value="9" onchange="updateRadioVal('storyGrid',this.value)"><span class="pill-text">9宫格</span></label>
-                            <label class="pill-label"><input type="radio" name="storyGrid" value="custom" onchange="updateRadioVal('storyGrid',this.value)"><span class="pill-text">自定义</span></label>
-                        </div>
-                        <input class="card-input" id="customGrid" type="number" placeholder="自定义格数" style="display:none;margin-top:8px" min="1" max="20" value="4" oninput="updateTextVal('customGrid',this.value)">
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">画面比例</span>
-                                <span class="selected-value" id="val-storyAspect">16:9</span>
-                            </div>
-                        </div>
-                        <div class="pill-group pill-group-single" id="pills-storyAspect">
-                            <label class="pill-label"><input type="radio" name="storyAspect" value="16:9" checked onchange="updateRadioVal('storyAspect',this.value)"><span class="pill-text">16:9</span></label>
-                            <label class="pill-label"><input type="radio" name="storyAspect" value="4:3" onchange="updateRadioVal('storyAspect',this.value)"><span class="pill-text">4:3</span></label>
-                            <label class="pill-label"><input type="radio" name="storyAspect" value="1:1" onchange="updateRadioVal('storyAspect',this.value)"><span class="pill-text">1:1</span></label>
-                            <label class="pill-label"><input type="radio" name="storyAspect" value="9:16" onchange="updateRadioVal('storyAspect',this.value)"><span class="pill-text">9:16</span></label>
-                        </div>
-                    </div>
-                    <div class="card" style="grid-column: span 2;">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">上传参考图</span>
-                            </div>
-                        </div>
-                        <input type="file" id="sbFileInput" multiple accept="image/*" style="display:none" onchange="handleSbFiles(this.files)">
-                        <div id="sbDropZone" onclick="document.getElementById('sbFileInput').click()">
-                            <div>📁 点击或拖拽上传参考图片</div>
-                            <div style="color:var(--text-muted);font-size:0.75rem;margin-top:4px">支持多张图片</div>
-                        </div>
-                        <div id="sbPreview"></div>
-                    </div>
-                    <div class="card" style="grid-column: span 2;">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">基础提示词（每帧通用）</span>
-                            </div>
-                        </div>
-                        <textarea class="card-input" id="storyboardPrompt" placeholder="输入每帧通用的基础提示词" style="min-height:80px"></textarea>
-                    </div>
-                    <div class="card" style="grid-column: span 2;">
-                        <button class="btn-primary" onclick="generateStoryboard()" style="width:100%">🎬 生成分镜提示词并打开豆包</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: 豆包反编译 -->
-            <div class="tab-panel" id="tab-decompile">
-                <div class="section-title">🔬 豆包反编译</div>
-                <div class="grid-container">
-                    <div class="card" style="grid-column: span 4;">
-                        <div class="card-header">
-                            <div class="card-title-group">
-                                <span class="card-label">豆包提示词</span>
-                            </div>
-                        </div>
-                        <textarea class="card-input" id="doubaoPrompt" placeholder="粘贴豆包生成的提示词在这里进行分析..." style="min-height:100px"></textarea>
-                    </div>
-                    <div class="card" style="grid-column: span 4;">
-                        <button class="btn-primary" onclick="decGenerateTemplate()" style="width:100%">🔬 生成JSON模板</button>
-                    </div>
-                </div>
-                <textarea class="card-input" id="decTemplateOutput" readonly placeholder="生成JSON提示词模板..." style="min-height:120px;margin-top:16px;font-family:monospace;font-size:0.75rem"></textarea>
-                <div style="display:flex;gap:8px;margin-top:8px">
-                    <button class="copy-btn" onclick="decCopyTemplate()">📋 复制模板</button>
-                    <button class="copy-btn copy-main" onclick="decCopyAndOpen()">🚀 复制并打开豆包</button>
-                </div>
-            </div>
-
-            <!-- TAB: 收藏与历史 -->
-            <div class="tab-panel" id="tab-save">
-                <div class="section-title">💾 收藏与历史</div>
-                <div class="grid-container">
-                    <div class="card" style="grid-column: span 4;">
-                        <button class="btn-primary" onclick="saveToCollection()" style="width:100%">💾 保存当前配置到收藏</button>
-                    </div>
-                </div>
-                <div class="collection-list" id="collectionList">
-                    <div class="empty-collection" style="text-align:center;color:var(--text-muted);padding:40px 20px;font-size:0.85rem">
-                        暂无收藏项 · 点击上方按钮保存当前配置
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- RIGHT PANEL -->
-    <div id="right-panel">
-        <div class="preview-header">
-            <h3>📋 提示词预览</h3>
-            <div class="preview-actions">
-                <button class="copy-btn" onclick="switchOutputTab('text')" id="tabBtn-text">📝 文本</button>
-                <button class="copy-btn" onclick="switchOutputTab('json')" id="tabBtn-json">📊 JSON</button>
-                <button class="copy-btn copy-main" onclick="copyCurrentOutput()">📋 复制</button>
-            </div>
-        </div>
-        <div id="preview-content">
-            <div id="outputTextTab" class="prompt-output-tab">
-                选择参数后自动生成提示词...
-            </div>
-            <div id="outputJsonTab" class="json-output-tab" style="display:none">
-                {}
-            </div>
-            <div class="reverse-prompt-section">
-                <label>🛑 反向提示词（自动生成）</label>
-                <div class="reverse-text" id="reversePrompt">
-                    禁止出现水印、logo、二维码、文字、拼写错误。避免模糊、比例拉伸、结构变形。确保物体、材质、光影一致。防止涂抹感、元素缺失、过度美化。
+                <!-- Collections Panel -->
+                <div class="tab-panel" id="tab-collections">
+                    <div class="section-title">📁 收藏管理</div>
+                    <div id="collectionList"></div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+
+        <div id="right-panel">
+            <div class="preview-header">
+                <div class="preview-title">📋 JSON 提示词</div>
+                <div class="output-tabs">
+                    <button class="out-tab-btn active" onclick="switchOutputTab('json')">JSON</button>
+                    <button class="out-tab-btn" onclick="switchOutputTab('text')">文本</button>
+                </div>
+            </div>
+            <div id="preview-content">
+                <pre id="json-preview">{}</pre>
+                <pre id="text-preview" style="display:none;"></pre>
+            </div>
+            <div class="reverse-box" id="reversePrompt"></div>
+            <div class="preview-header" style="border-top:1px solid var(--border-color); border-bottom:none;">
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <button class="copy-btn" onclick="copyOutput()">复制当前</button>
+                    <button class="copy-btn" onclick="saveToCollection()">保存收藏</button>
+                </div>
+                <div class="panel-wechat">
+                    <span style="font-size:0.8rem;color:var(--text-muted);">微信号: <span class="wechat-val">LinDesign666</span></span>
+                    <button class="copy-btn wechat-btn" onclick="copyWeChat()">复制</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
 
 <script>
-// ============ GLOBAL STATE ============
-var currentOutputMode = 'text';
-var currentPromptText = '';
-var currentJsonOutput = {};
-var sbImages = [];
-var collections = JSON.parse(localStorage.getItem('proprompt_collections') || '[]');
+// ==================== GLOBAL STATE ====================
+const WECHAT_ID = "LinDesign666";
+let formSchema = null;
+let currentData = {};
+let currentOutputMode = 'json';
+let currentConfigPath = 'config.json';
+let currentWeather = 'sunny';
 
-// ============ HELPERS ============
-function $$(sel) { return document.querySelector(sel); }
-function $$$(sel) { return document.querySelectorAll(sel); }
+// Weather / multi-config support
+const weatherConfig = {
+    sunny: { prompt: "晴天，明亮的阳光，清晰的天空，柔和的自然光，高质量细节", config: "config.json" },
+    cloudy: { prompt: "阴天，柔和的散射光，平静的氛围，细节清晰，高画质", config: "config.json" },
+    rainy: { prompt: "雨天，湿润的地面，雨滴效果，朦胧氛围，电影级质感", config: "config.json" }
+};
 
-function getRadioVal(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
-    return el ? el.value : '';
+let collections = [];
+try { collections = JSON.parse(localStorage.getItem('proprompt_collections') || '[]'); } catch(e) { collections = []; }
+
+// ==================== HELPERS ====================
+function escapeHtml(s) { return String(s).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>'); }
+function escapeAttr(s) { return String(s).replace(/&/g,'&').replace(/"/g,'"'); }
+function getFieldByKey(fk) {
+    if (!formSchema) return null;
+    for (const sk in formSchema) {
+        const sec = formSchema[sk];
+        if (sec.fields && sec.fields[fk]) return sec.fields[fk];
+    }
+    return null;
+}
+function normOptionItem(raw) {
+    if (typeof raw === 'string') return { value: raw, label: raw };
+    if (typeof raw === 'object') return { value: String(raw.value), label: String(raw.label) };
+    return null;
+}
+function flatOptionValues(field) {
+    return (field.options || []).map(i => normOptionItem(i)?.value).filter(Boolean);
+}
+function labelForOptionValue(field, v) {
+    if (!field || !field.options) return v;
+    const list = Array.isArray(field.options) ? field.options : Object.values(field.options).flat();
+    const item = list.find(i => normOptionItem(i).value === v);
+    return item ? normOptionItem(item).label : v;
+}
+function pickInitialValue(field) {
+    if (field.type === 'switch') return !!field.default;
+    if (field.type === 'multi-select') return Array.isArray(field.default) ? field.default : [];
+    if (field.type === 'select' || field.type === 'button-select') {
+        const opts = flatOptionValues(field);
+        return opts.includes(field.default) ? field.default : opts[0] || '';
+    }
+    if (field.type === 'text') return String(field.default || '');
+    return '';
+}
+function valTagText(field, v) {
+    if (field.type === 'switch') return v ? '开' : '关';
+    if (field.type === 'multi-select') return v.map(x => labelForOptionValue(field,x)).join(' · ') || '未选';
+    if (field.type === 'select' || field.type === 'button-select') return labelForOptionValue(field,v) || '未选';
+    return v || '未填';
 }
 
-function getSelectVal(id) {
-    var el = document.getElementById(id);
-    return el ? el.value : '';
-}
-
-function getChecked(id) {
-    var el = document.getElementById(id);
-    return el ? el.checked : false;
-}
-
+// ==================== TOAST ====================
 function showToast(msg) {
-    var t = document.getElementById('toast');
+    const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    clearTimeout(t._timeout);
-    t._timeout = setTimeout(function() { t.classList.remove('show'); }, 2500);
+    clearTimeout(t._tid);
+    t._tid = setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-// ============ UPDATE VALUE DISPLAYS ============
-function updateRadioVal(key, val) {
-    var tag = document.getElementById('val-' + key);
-    if (tag) {
-        tag.textContent = val || '未选';
-        tag.classList.toggle('empty', !val);
-    }
-    // Show custom grid input
-    if (key === 'storyGrid') {
-        document.getElementById('customGrid').style.display = val === 'custom' ? 'inline-block' : 'none';
-    }
-    autoGenerate();
-}
-
-function updateSelectVal(key, val) {
-    if (val === '__ADD_NEW__') {
-        document.getElementById('adder-' + key).classList.add('active');
-        return;
-    }
-    document.getElementById('adder-' + key).classList.remove('active');
-    var tag = document.getElementById('val-' + key);
-    if (tag) {
-        tag.textContent = val || '未选';
-        tag.classList.toggle('empty', !val);
-    }
-    autoGenerate();
-}
-
-function updateTextVal(key, val) {
-    var tag = document.getElementById('val-' + key);
-    if (tag) {
-        tag.textContent = val || '未填';
-        tag.classList.toggle('empty', !val);
-    }
-    autoGenerate();
-}
-
-function updateSwitchVal(key, val) {
-    var tag = document.getElementById('val-' + key);
-    if (tag) {
-        tag.textContent = val ? '开' : '关';
-        tag.classList.toggle('empty', !val);
-    }
-    autoGenerate();
-}
-
-function toggleAdder(key) {
-    document.getElementById('adder-' + key).classList.toggle('active');
-}
-
-function saveCustomRadio(key) {
-    var v = document.getElementById('input-' + key).value.trim();
-    if (!v) return;
-    var pg = document.getElementById('pills-' + key);
-    var name = pg.querySelector('input[type="radio"]').name;
-    var label = document.createElement('label');
-    label.className = 'pill-label';
-    label.innerHTML = '<input type="radio" name="' + name + '" value="' + v.replace(/"/g,'"') + '" checked onchange="updateRadioVal(\'' + key + '\',this.value)"><span class="pill-text">' + v.replace(/</g,'<') + '</span>';
-    pg.insertBefore(label, pg.lastElementChild);
-    updateRadioVal(key, v);
-    document.getElementById('input-' + key).value = '';
-    document.getElementById('adder-' + key).classList.remove('active');
-}
-
-function saveCustomSelect(key) {
-    var v = document.getElementById('input-' + key).value.trim();
-    if (!v) return;
-    var sel = document.getElementById(key);
-    sel.add(new Option(v, v), sel.options[sel.options.length - 1]);
-    sel.value = v;
-    updateSelectVal(key, v);
-    document.getElementById('input-' + key).value = '';
-    document.getElementById('adder-' + key).classList.remove('active');
-}
-
-// ============ TAB SWITCHING ============
-var tabBtns = document.querySelectorAll('#tabBar .tab-btn');
-tabBtns.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-        tabBtns.forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        var tabId = btn.getAttribute('data-tab');
-        document.querySelectorAll('#tabContainer .tab-panel').forEach(function(p) { p.classList.remove('active'); });
-        document.getElementById('tab-' + tabId).classList.add('active');
-    });
-});
-
-// ============ OUTPUT TAB SWITCHING ============
+// ==================== OUTPUT SWITCH ====================
 function switchOutputTab(mode) {
     currentOutputMode = mode;
-    document.getElementById('outputTextTab').style.display = mode === 'text' ? 'block' : 'none';
-    document.getElementById('outputJsonTab').style.display = mode === 'json' ? 'block' : 'none';
-    document.getElementById('tabBtn-text').style.background = mode === 'text' ? 'var(--primary-color)' : 'var(--card-bg)';
-    document.getElementById('tabBtn-text').style.color = mode === 'text' ? '#fff' : 'var(--text-muted)';
-    document.getElementById('tabBtn-json').style.background = mode === 'json' ? 'var(--primary-color)' : 'var(--card-bg)';
-    document.getElementById('tabBtn-json').style.color = mode === 'json' ? '#fff' : 'var(--text-muted)';
+    document.getElementById('json-preview').style.display = mode === 'json' ? 'block' : 'none';
+    document.getElementById('text-preview').style.display = mode === 'text' ? 'block' : 'none';
+    document.querySelectorAll('.out-tab-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent === (mode === 'json' ? 'JSON' : '文本'));
+    });
 }
 
-function copyCurrentOutput() {
-    var text = currentOutputMode === 'text' ? currentPromptText : JSON.stringify(currentJsonOutput, null, 2);
-    if (!text || text === '{}') { showToast('请先生成提示词'); return; }
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(function() { showToast('已复制到剪贴板'); });
-    } else {
-        var ta = document.createElement('textarea');
-        ta.value = text; document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); ta.remove();
-        showToast('已复制到剪贴板');
+// ==================== JSON PREVIEW ====================
+function splitBoolFieldKeyToJsonPair(fk) {
+    const i = Math.max(fk.indexOf(':'), fk.indexOf('：'));
+    if (i < 0) return null;
+    return { jsonKey: fk.slice(0, i).trim(), jsonVal: fk.slice(i + 1).trim() };
+}
+
+function buildNestedOutput() {
+    const nested = {};
+    if (formSchema) {
+        for (const sk in formSchema) {
+            nested[sk] = {};
+            const fields = formSchema[sk].fields;
+            for (const fk in fields) {
+                const field = fields[fk];
+                const val = currentData[fk];
+                if (field.type === 'switch') {
+                    if (!val) continue;
+                    const p = splitBoolFieldKeyToJsonPair(fk);
+                    if (p) nested[sk][p.jsonKey] = p.jsonVal;
+                    else nested[sk][fk] = true;
+                } else {
+                    nested[sk][fk] = val;
+                }
+            }
+        }
     }
+    return nested;
 }
 
-// ============ GENERATE PROMPT ============
-function generatePrompt() {
-    var taskType = getRadioVal('taskType') || '模型→真实摄影';
-    var spaceType = getRadioVal('spaceType') || '平层家装室内';
-    var designStyle = getSelectVal('designStyle') || '现代室内设计';
-    var outdoorScene = getRadioVal('outdoorScene') || '';
-    var location = getSelectVal('location') || '';
-    var season = getRadioVal('season') || '';
-    var customStyle = document.getElementById('customStyle').value.trim();
-    var customDesc = document.getElementById('customDesc').value.trim();
-    var weather = getRadioVal('weather') || '晴天';
-    var timeOfDay = getRadioVal('timeOfDay') || '上午9点';
-    var skyLight = getSelectVal('skyLight') || '晴天自然光';
-    var indoorLight = getSelectVal('indoorLight') || '日常照明模式';
-    var colorTemp = getSelectVal('colorTemp') || '中性光（4500K）';
-    var sunLight = getRadioVal('sunLight') || '无直射阳光';
-    var curtainType = getSelectVal('curtainType') || '默认图中类型';
-    var toneStyle = getSelectVal('toneStyle') || '原生中性微暖色调';
-    var cameraModel = getSelectVal('cameraModel') || 'iPhone 17 Pro Max';
-    var aperture = getRadioVal('aperture') || 'f/5.6';
-    var focalLength = getRadioVal('focalLength') || '24mm';
-    var iso = getRadioVal('iso') || 'ISO 100';
-    var shutter = getRadioVal('shutter') || '1s';
-    var resolution = getSelectVal('resolution') || '8K';
-    var aspectRatio = getSelectVal('aspectRatio') || '保持原图';
-    var geomFidelity = getRadioVal('geomFidelity') || '强制几何保真';
-    var materialConsistency = getRadioVal('materialConsistency') || '完全还原材质';
-    var materialEnhance = getChecked('materialEnhance');
-    var raytrace = getChecked('raytrace');
-    var filmGrain = getChecked('filmGrain');
-    var techHdr = getChecked('techHdr');
-    var techTripod = getChecked('techTripod');
-    var techTilt = getChecked('techTilt');
+function buildTextOutput() {
+    const out = buildNestedOutput();
+    const lines = [];
+    for (const sk in out) {
+        lines.push('【' + sk + '】');
+        for (const k in out[sk]) {
+            lines.push('  ' + k + ': ' + out[sk][k]);
+        }
+        lines.push('');
+    }
+    return lines.join('\n');
+}
 
-    // Build performance string
-    var perfParts = [resolution + '分辨率'];
-    if (techHdr) perfParts.push('HDR包围曝光');
-    if (techTripod) perfParts.push('三脚架长曝');
-    if (techTilt) perfParts.push('移轴矫正');
-    perfParts.push('室内纪实拍摄');
-    var perfStr = perfParts.join('，');
-
-    // Build prompt text
-    var parts = [];
-
-    parts.push('任务：' + taskType);
-    parts.push('空间：' + spaceType + (customStyle ? '，' + customStyle : ''));
-    parts.push('风格：' + designStyle);
-    if (customDesc) parts.push('描述：' + customDesc);
-    if (outdoorScene) parts.push('外景：' + outdoorScene);
-    if (location) parts.push('地点：' + location);
-    if (season) parts.push('季节：' + season);
-
-    parts.push('');
-    parts.push('天气：' + weather + '，' + timeOfDay);
-    parts.push('天空光：' + skyLight);
-    parts.push('室内灯光：' + indoorLight);
-    parts.push('色温：' + colorTemp);
-    parts.push('太阳光影：' + sunLight);
-    parts.push('窗帘：' + curtainType);
-    parts.push('后期色调：' + toneStyle);
-
-    parts.push('');
-    parts.push('相机：' + cameraModel + '，' + aperture + '，' + focalLength + '，' + iso + '，快门' + shutter);
-    parts.push('分辨率：' + resolution + '，比例：' + aspectRatio);
-    parts.push('画质：' + perfStr);
-
-    parts.push('');
-    parts.push('几何保真：' + geomFidelity);
-    parts.push('材质一致性：' + materialConsistency);
-    if (materialEnhance) parts.push('已启用PBR写实材质增强');
-    if (raytrace) parts.push('已启用光线追踪反射');
-    if (filmGrain) parts.push('已启用胶片颗粒质感');
-
-    currentPromptText = parts.join('\n');
-
-    // JSON output
-    currentJsonOutput = {
-        "任务类型": taskType,
-        "空间类型": spaceType,
-        "设计风格": designStyle,
-        "自定义风格": customStyle || null,
-        "补充描述": customDesc || null,
-        "外景": outdoorScene || null,
-        "地点": location || null,
-        "季节": season || null,
-        "天气": weather,
-        "时间": timeOfDay,
-        "天空光": skyLight,
-        "室内灯光": indoorLight,
-        "色温": colorTemp,
-        "太阳光影": sunLight,
-        "窗帘": curtainType,
-        "后期色调": toneStyle,
-        "相机型号": cameraModel,
-        "光圈": aperture,
-        "焦距": focalLength,
-        "ISO": iso,
-        "快门": shutter,
-        "分辨率": resolution,
-        "画面比例": aspectRatio,
-        "画面表现": perfStr,
-        "PBR材质": materialEnhance ? '启用' : '未启用',
-        "光线追踪": raytrace ? '启用' : '未启用',
-        "胶片质感": filmGrain ? '启用' : '未启用'
-    };
-
-    // Update displays
-    document.getElementById('outputTextTab').textContent = currentPromptText;
-    document.getElementById('outputJsonTab').textContent = JSON.stringify(currentJsonOutput, null, 2);
-
-    // Reverse prompt
-    var reverseParts = [
+function buildReversePrompt() {
+    return [
         '禁止出现水印、logo、二维码、文字、拼写错误。',
         '避免模糊、比例拉伸、结构变形。',
         '确保物体、材质、光影一致。',
         '防止涂抹感、元素缺失、过度美化。'
-    ];
-    document.getElementById('reversePrompt').textContent = reverseParts.join('\n');
+    ].join('\n');
 }
 
-// ============ AUTO GENERATE ============
-var autoTimer = null;
-function autoGenerate() {
-    clearTimeout(autoTimer);
-    autoTimer = setTimeout(generatePrompt, 200);
+function updatePreview() {
+    const jsonOut = buildNestedOutput();
+    document.getElementById('json-preview').textContent = JSON.stringify(jsonOut, null, 2);
+    document.getElementById('text-preview').textContent = buildTextOutput();
+    document.getElementById('reversePrompt').textContent = buildReversePrompt();
 }
 
-// ============ COLLECTION ============
+// ==================== DATA UPDATES ====================
+function updateData(key, val) {
+    currentData[key] = val;
+    const tag = document.getElementById('val-' + key);
+    const field = getFieldByKey(key);
+    if (tag && field) {
+        tag.textContent = valTagText(field, val);
+        tag.classList.toggle('empty', val === false || (Array.isArray(val) ? val.length === 0 : val === ''));
+    }
+    updatePreview();
+}
+
+function updateMultiData(key, val, checked) {
+    if (checked) currentData[key].push(val);
+    else currentData[key] = currentData[key].filter(x => x !== val);
+    const tag = document.getElementById('val-' + key);
+    const field = getFieldByKey(key);
+    if (tag && field) {
+        tag.textContent = currentData[key].length ? currentData[key].map(x => labelForOptionValue(field,x)).join(' · ') : '未选';
+        tag.classList.toggle('empty', !currentData[key].length);
+    }
+    updatePreview();
+}
+
+function handleSelectChange(key, val) {
+    if (val === '__ADD_NEW__') {
+        document.getElementById('adder-' + key).classList.add('active');
+    } else {
+        document.getElementById('adder-' + key).classList.remove('active');
+        updateData(key, val);
+    }
+}
+
+function toggleAdder(key) { document.getElementById('adder-' + key).classList.toggle('active'); }
+
+function saveCustomItem(key, type) {
+    const v = document.getElementById('input-' + key).value.trim();
+    if (!v) return;
+    if (type === 'select') {
+        const sel = document.getElementById('select-' + key);
+        sel.add(new Option(v, v), sel.options[sel.options.length - 1]);
+        sel.value = v;
+        updateData(key, v);
+    } else if (type === 'button-select') {
+        const pg = document.getElementById('pills-' + key);
+        const name = pg.querySelector('input[type="radio"]').name;
+        const label = document.createElement('label');
+        label.className = 'pill-label';
+        label.innerHTML = '<input type="radio" name="' + name + '" value="' + escapeAttr(v) + '" checked onchange="updateData(\'' + key + '\',this.value)"><span class="pill-text">' + escapeHtml(v) + '</span>';
+        pg.insertBefore(label, pg.lastElementChild);
+        updateData(key, v);
+    } else {
+        const pg = document.getElementById('pills-' + key);
+        const label = document.createElement('label');
+        label.className = 'pill-label';
+        label.innerHTML = '<input type="checkbox" value="' + escapeAttr(v) + '" checked onchange="updateMultiData(\'' + key + '\',this.value,this.checked)"><span class="pill-text">' + escapeHtml(v) + '</span>';
+        pg.insertBefore(label, pg.lastElementChild);
+        updateMultiData(key, v, true);
+    }
+    document.getElementById('input-' + key).value = '';
+    document.getElementById('adder-' + key).classList.remove('active');
+}
+
+// ==================== BUILD FORM FROM SCHEMA ====================
+function buildTabs(schema) {
+    const tabBar = document.getElementById('tabBar');
+    const content = document.getElementById('tabContent');
+    tabBar.innerHTML = '';
+
+    // Static tabs (storyboard, doubao, collections, and maybe merge with dynamic manually)
+    const allTabIds = [];
+    let first = true;
+    for (const sk in schema) {
+        const section = schema[sk];
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn' + (first ? ' active' : '');
+        btn.textContent = (section.icon || '') + ' ' + sk;
+        btn.dataset.tab = 'tab-' + sk;
+        btn.onclick = () => switchTab('tab-' + sk);
+        tabBar.appendChild(btn);
+        allTabIds.push('tab-' + sk);
+        first = false;
+
+        // Panel
+        let panel = content.querySelector('#tab-' + sk);
+        if (!panel) {
+            panel = document.createElement('div');
+            panel.className = 'tab-panel';
+            panel.id = 'tab-' + sk;
+            content.appendChild(panel);
+        }
+        panel.innerHTML = '<div class="section-title"><span>' + (section.icon || '📌') + '</span> ' + escapeHtml(section.title) + '</div>';
+        panel.classList.toggle('active', allTabIds.length === 1);
+        const grid = document.createElement('div');
+        grid.className = 'grid-container';
+        buildSectionFields(section, grid);
+        panel.appendChild(grid);
+    }
+
+    // Storyboard tab button
+    const sbBtn = document.createElement('button');
+    sbBtn.className = 'tab-btn';
+    sbBtn.textContent = '🎬 分镜';
+    sbBtn.dataset.tab = 'tab-storyboard';
+    sbBtn.onclick = () => switchTab('tab-storyboard');
+    tabBar.appendChild(sbBtn);
+    allTabIds.push('tab-storyboard');
+
+    // Doubao tab button
+    const dbBtn = document.createElement('button');
+    dbBtn.className = 'tab-btn';
+    dbBtn.textContent = '🔍 豆包反解';
+    dbBtn.dataset.tab = 'tab-doubao';
+    dbBtn.onclick = () => switchTab('tab-doubao');
+    tabBar.appendChild(dbBtn);
+    allTabIds.push('tab-doubao');
+
+    // Collections tab button
+    const colBtn = document.createElement('button');
+    colBtn.className = 'tab-btn';
+    colBtn.textContent = '📁 收藏';
+    colBtn.dataset.tab = 'tab-collections';
+    colBtn.onclick = () => switchTab('tab-collections');
+    tabBar.appendChild(colBtn);
+    allTabIds.push('tab-collections');
+
+    // Ensure first tab is active
+    switchTab(allTabIds[0]);
+}
+
+function buildSectionFields(section, grid) {
+    const fields = section.fields;
+    for (const fk in fields) {
+        const field = fields[fk];
+        const card = document.createElement('div');
+        card.className = 'card';
+        const iv = pickInitialValue(field);
+        currentData[fk] = iv;
+        const tagShow = valTagText(field, iv);
+        const tagClass = (iv === false || (Array.isArray(iv) && iv.length === 0) || iv === '')
+            ? 'selected-value empty' : 'selected-value';
+
+        let inner = '<div class="card-header">';
+        inner += '<div class="card-title-group">';
+        inner += '<span class="card-label">' + escapeHtml(field.label || fk) + '</span>';
+        if (field.description) inner += '<p class="card-description">' + escapeHtml(field.description) + '</p>';
+        inner += '<span id="val-' + fk + '" class="' + tagClass + '">' + tagShow + '</span>';
+        inner += '</div>';
+
+        if (field.type === 'switch') {
+            inner += '<label class="switch"><input type="checkbox"' + (iv ? ' checked' : '') + ' onchange="updateData(\'' + fk + '\',this.checked)"><span class="slider"></span></label>';
+            inner += '</div>';
+        } else {
+            inner += '</div><div>';
+            if (field.type === 'text') {
+                inner += '<input type="text" value="' + escapeAttr(iv) + '" oninput="updateData(\'' + fk + '\',this.value)">';
+            } else if (field.type === 'select') {
+                inner += '<select id="select-' + fk + '" onchange="handleSelectChange(\'' + fk + '\',this.value)">';
+                (field.options || []).forEach(opt => {
+                    const n = normOptionItem(opt);
+                    inner += '<option value="' + escapeAttr(n.value) + '"' + (n.value === iv ? ' selected' : '') + '>' + escapeHtml(n.label) + '</option>';
+                });
+                inner += '<option value="__ADD_NEW__">➕ 自定义</option></select>';
+            } else if (field.type === 'multi-select') {
+                inner += '<div class="pill-group" id="pills-' + fk + '">';
+                (field.options || []).forEach(opt => {
+                    const n = normOptionItem(opt);
+                    const checked = iv.includes(n.value) ? ' checked' : '';
+                    inner += '<label class="pill-label"><input type="checkbox" value="' + escapeAttr(n.value) + '"' + checked + ' onchange="updateMultiData(\'' + fk + '\',this.value,this.checked)"><span class="pill-text">' + escapeHtml(n.label) + '</span></label>';
+                });
+                inner += '<div class="pill-text" style="border-style:dashed" onclick="toggleAdder(\'' + fk + '\')">+ 自定义</div></div>';
+            } else if (field.type === 'button-select') {
+                const name = 'radio-' + fk;
+                inner += '<div class="pill-group" id="pills-' + fk + '">';
+                (field.options || []).forEach(opt => {
+                    const n = normOptionItem(opt);
+                    inner += '<label class="pill-label"><input type="radio" name="' + name + '" value="' + escapeAttr(n.value) + '"' + (n.value === iv ? ' checked' : '') + ' onchange="updateData(\'' + fk + '\',this.value)"><span class="pill-text">' + escapeHtml(n.label) + '</span></label>';
+                });
+                inner += '<div class="pill-text" style="border-style:dashed" onclick="toggleAdder(\'' + fk + '\')">+ 自定义</div></div>';
+            }
+            inner += '<div id="adder-' + fk + '" class="hidden-adder"><input type="text" id="input-' + fk + '" placeholder="输入新值"><button class="copy-btn" style="background:var(--primary-color);color:#fff" onclick="saveCustomItem(\'' + fk + '\',\'' + field.type + '\')">确定</button></div>';
+            inner += '</div>';
+        }
+        card.innerHTML = inner;
+        grid.appendChild(card);
+    }
+}
+
+function switchTab(tabId) {
+    document.querySelectorAll('#tabBar .tab-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.tab === tabId);
+    });
+    document.querySelectorAll('#tabContent .tab-panel').forEach(p => {
+        p.classList.toggle('active', p.id === tabId);
+    });
+}
+
+// ==================== WEATHER ====================
+function initWeatherButtons() {
+    const bar = document.getElementById('weatherBar');
+    if (!bar) return;
+    bar.innerHTML = '';
+    for (const key in weatherConfig) {
+        const btn = document.createElement('button');
+        btn.className = 'weather-btn' + (key === currentWeather ? ' active' : '') + (weatherConfig[key].isCustom ? ' custom' : '');
+        btn.dataset.type = key;
+        btn.textContent = weatherConfig[key].prompt.substring(0, 4) || key;
+        btn.onclick = () => {
+            currentWeather = key;
+            currentConfigPath = weatherConfig[key].config;
+            document.querySelectorAll('.weather-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            loadConfig();
+        };
+        bar.appendChild(btn);
+    }
+}
+
+// ==================== LOAD CONFIG ====================
+async function loadConfig() {
+    try {
+        const response = await fetch(currentConfigPath);
+        if (!response.ok) throw new Error('配置文件加载失败');
+        formSchema = await response.json();
+        currentData = {};
+        document.getElementById('tabBar').innerHTML = '';
+        // Preserve special panels, remove dynamic panels
+        const content = document.getElementById('tabContent');
+        const allPanels = content.querySelectorAll('.tab-panel');
+        const keepIds = ['tab-storyboard', 'tab-doubao', 'tab-collections'];
+        allPanels.forEach(p => {
+            if (!keepIds.includes(p.id)) p.remove();
+        });
+        buildTabs(formSchema);
+        updatePreview();
+    } catch (e) {
+        document.getElementById('tabContent').innerHTML = '<div style="color:#ef4444;text-align:center;padding:24px">加载失败: ' + escapeHtml(e.message) + '</div>';
+    }
+}
+
+// ==================== COPY ====================
+function copyOutput() {
+    const text = currentOutputMode === 'json'
+        ? document.getElementById('json-preview').textContent
+        : document.getElementById('text-preview').textContent;
+    if (!text || text === '{}') { showToast('无内容可复制'); return; }
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => showToast('✅ 已复制'));
+    } else {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); ta.remove();
+        showToast('✅ 已复制');
+    }
+}
+
+function copyWeChat() {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(WECHAT_ID).then(() => showToast('✅ 微信已复制'));
+    } else {
+        const ta = document.createElement('textarea');
+        ta.value = WECHAT_ID; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); ta.remove();
+        showToast('✅ 微信已复制');
+    }
+}
+
+// ==================== COLLECTION ====================
 function saveToCollection() {
-    generatePrompt();
-    var item = {
+    const item = {
         time: new Date().toLocaleString(),
-        prompt: currentPromptText,
-        json: currentJsonOutput
+        json: buildNestedOutput(),
+        text: buildTextOutput()
     };
     collections.unshift(item);
     if (collections.length > 50) collections = collections.slice(0, 50);
@@ -1597,28 +883,28 @@ function saveToCollection() {
 }
 
 function renderCollections() {
-    var container = document.getElementById('collectionList');
+    const container = document.getElementById('collectionList');
+    if (!container) return;
     if (!collections.length) {
-        container.innerHTML = '<div class="empty-collection" style="text-align:center;color:var(--text-muted);padding:40px 20px;font-size:0.85rem">暂无收藏项 · 点击上方按钮保存当前配置</div>';
+        container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px;font-size:0.82rem;">暂无收藏</div>';
         return;
     }
     container.innerHTML = '';
-    collections.forEach(function(item, i) {
-        var div = document.createElement('div');
+    collections.forEach((item, i) => {
+        const div = document.createElement('div');
         div.className = 'collection-item';
-        var preview = item.prompt ? item.prompt.substring(0, 40) + '...' : '(空)';
-        div.innerHTML = '<span>' + item.time + ' - ' + preview.replace(/</g,'<') + '</span><div><button onclick="loadCollection(' + i + ')">加载</button><button onclick="deleteCollection(' + i + ')">删除</button></div>';
+        const preview = (item.text || '').split('\n')[0] || '(空)';
+        div.innerHTML = '<span>' + escapeHtml(item.time) + ' - ' + escapeHtml(preview.substring(0, 40)) + '</span><div><button onclick="loadCollection(' + i + ')">加载</button><button onclick="deleteCollection(' + i + ')">删除</button></div>';
         container.appendChild(div);
     });
 }
 
 function loadCollection(i) {
-    var item = collections[i];
+    const item = collections[i];
     if (item.json) {
-        currentPromptText = item.prompt || '';
-        currentJsonOutput = item.json;
-        document.getElementById('outputTextTab').textContent = currentPromptText;
-        document.getElementById('outputJsonTab').textContent = JSON.stringify(currentJsonOutput, null, 2);
+        document.getElementById('json-preview').textContent = JSON.stringify(item.json, null, 2);
+        document.getElementById('text-preview').textContent = item.text || '';
+        document.getElementById('reversePrompt').textContent = buildReversePrompt();
         showToast('已加载收藏项');
     }
 }
@@ -1630,27 +916,20 @@ function deleteCollection(i) {
     showToast('已删除');
 }
 
-// ============ STORYBOARD ============
-document.getElementById('sbDropZone').addEventListener('dragover', function(e) { e.preventDefault(); this.style.borderColor = 'var(--primary-color)'; });
-document.getElementById('sbDropZone').addEventListener('dragleave', function(e) { this.style.borderColor = 'var(--border-color)'; });
-document.getElementById('sbDropZone').addEventListener('drop', function(e) {
-    e.preventDefault(); this.style.borderColor = 'var(--border-color)';
-    sbImages = Array.from(e.dataTransfer.files).filter(function(f) { return f.type.startsWith('image/'); });
-    renderSbPreview();
-});
-
+// ==================== STORYBOARD ====================
+let sbImages = [];
 function handleSbFiles(files) {
     sbImages = Array.from(files);
     renderSbPreview();
 }
-
 function renderSbPreview() {
-    var container = document.getElementById('sbPreview');
+    const container = document.getElementById('sbPreview');
+    const dz = document.getElementById('sbDropZone');
     container.innerHTML = '';
-    sbImages.forEach(function(file, i) {
-        var reader = new FileReader();
-        reader.onload = function(ev) {
-            var img = document.createElement('div');
+    sbImages.forEach((file, i) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const img = document.createElement('div');
             img.style.cssText = 'width:56px;height:56px;border-radius:6px;background:url(' + ev.target.result + ') center/cover;border:1px solid var(--border-color);position:relative';
             img.innerHTML = '<span style="position:absolute;top:-4px;right:-4px;background:var(--primary-color);color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700">' + (i+1) + '</span>';
             container.appendChild(img);
@@ -1658,33 +937,14 @@ function renderSbPreview() {
         reader.readAsDataURL(file);
     });
     if (sbImages.length) {
-        document.getElementById('sbDropZone').innerHTML = '<div style="font-size:1.1em">✅ ' + sbImages.length + ' 张图片已选择</div><div style="color:var(--text-muted);font-size:0.75rem">点击重新选择</div>';
+        dz.innerHTML = '<div style="font-size:1.1em">✅ ' + sbImages.length + ' 张图片已选择</div><div style="color:var(--text-muted);font-size:0.75rem">点击重新选择</div>';
     }
 }
-
 function generateStoryboard() {
     if (!sbImages.length) { showToast('请先上传参考图片'); return; }
-
-    var gridVal = getRadioVal('storyGrid') || '4';
-    var gridNum = gridVal === 'custom' ? (parseInt(document.getElementById('customGrid').value) || 4) : parseInt(gridVal);
-    var aspect = getRadioVal('storyAspect') || '16:9';
-    var basePrompt = document.getElementById('storyboardPrompt').value.trim();
-    var cameraModel = getSelectVal('cameraModel') || 'iPhone 17 Pro Max';
-    var resolution = getSelectVal('resolution') || '8K';
-    var spaceType = getRadioVal('spaceType') || '平层家装室内';
-    var designStyle = getSelectVal('designStyle') || '现代室内设计';
-
-    var prompt = '# 分镜提示词生成任务\n\n';
+    const basePrompt = document.getElementById('storyboardPrompt').value.trim() || '专业室内设计摄影';
+    let prompt = '# 分镜提示词生成任务\n\n';
     prompt += '你是一个专业的AI空间摄影师和提示词工程师。我现在为你提供了 ' + sbImages.length + ' 张参考图片，请按照以下要求，为每一张图片生成对应的分镜提示词。\n\n';
-    prompt += '## 基本信息\n';
-    prompt += '- 分镜模式：' + gridNum + '宫格\n';
-    prompt += '- 画面比例：' + aspect + '\n';
-    prompt += '- 摄影设备：' + cameraModel + '，' + resolution + '分辨率\n';
-    prompt += '- 空间类型：' + spaceType + '\n';
-    prompt += '- 设计风格：' + designStyle + '\n';
-    prompt += '- 总帧数：' + gridNum + ' 格（实际有 ' + sbImages.length + ' 张图片）\n\n';
-    prompt += '## 基础提示词（每帧必须包含）\n';
-    prompt += (basePrompt || '根据参考图拍摄专业室内设计照片') + '\n\n';
     prompt += '## 对每张图片的分析要求\n';
     prompt += '请仔细观察每张图片，分析以下内容并生成对应的分镜提示词：\n\n';
     prompt += '1. **空间描述**：图片展示的是什么空间/场景？主要元素有哪些？\n';
@@ -1694,140 +954,70 @@ function generateStoryboard() {
     prompt += '5. **色彩氛围**：整体色调是什么？营造了什么氛围？\n';
     prompt += '6. **重点表现**：这一帧应该重点展示什么？\n\n';
     prompt += '## 输出格式（请严格按以下格式为每帧生成）\n\n';
-
-    for (var f = 1; f <= Math.min(sbImages.length, gridNum); f++) {
+    for (let f = 1; f <= sbImages.length; f++) {
         prompt += '### 【第 ' + f + ' 格】📷 基于参考图\n';
         prompt += '**分析说明**：（简要描述图片内容和你的分析）\n\n';
-        prompt += '**分镜提示词：**\n';
-        prompt += (basePrompt || '专业室内设计摄影') + '，画面比例' + aspect + '，[此处根据图片分析写入详细的场景、构图、光影、材质、色彩描述]。重点表现[根据图片确定的重点]。\n\n';
-        prompt += '**反向提示词：**\n';
-        prompt += '禁止出现水印、logo、二维码、文字、拼写错误。避免模糊、比例拉伸、结构变形。确保物体、材质、光影一致。防止涂抹感、元素缺失、过度美化。\n\n';
+        prompt += '**分镜提示词：**\n' + basePrompt + '，[此处根据图片分析写入详细的场景、构图、光影、材质、色彩描述]。重点表现[根据图片确定的重点]。\n\n';
+        prompt += '**反向提示词：**\n禁止出现水印、logo、二维码、文字、拼写错误。避免模糊、比例拉伸、结构变形。确保物体、材质、光影一致。防止涂抹感、元素缺失、过度美化。\n\n';
     }
-
-    if (sbImages.length < gridNum) {
-        prompt += '### 【第 ' + (sbImages.length + 1) + ' ~ ' + gridNum + ' 格】推演帧\n';
-        prompt += '（无参考图，请根据整体风格和前后帧关系合理推演，格式同上）\n\n';
-    }
-
     prompt += '## 强制统一约束（适用于所有帧）\n';
-    prompt += '- 采用' + resolution + '分辨率进行全空间拍摄\n';
     prompt += '- 100%保持原图比例、结构、主体不变\n';
     prompt += '- 营造前景深效果，增强层次感和立体感\n';
     prompt += '- 保持画面自然和谐，避免过度处理\n\n';
-    prompt += '请开始分析图片并生成所有 ' + gridNum + ' 帧的分镜提示词。';
-
-    currentPromptText = prompt;
-    document.getElementById('outputTextTab').textContent = prompt;
-
+    prompt += '请开始分析图片并生成所有 ' + sbImages.length + ' 帧的分镜提示词。';
+    document.getElementById('text-preview').textContent = prompt;
+    switchOutputTab('text');
     if (navigator.clipboard) {
-        navigator.clipboard.writeText(prompt).then(function() {
-            showToast('提示词已复制，正在打开豆包...');
-        });
+        navigator.clipboard.writeText(prompt).then(() => showToast('提示词已复制，正在打开豆包...'));
     }
     window.open('https://www.doubao.com/chat/', '_blank');
 }
+// Drop zone events
+document.addEventListener('DOMContentLoaded', () => {
+    const dz = document.getElementById('sbDropZone');
+    if (dz) {
+        dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.borderColor = 'var(--primary-color)'; });
+        dz.addEventListener('dragleave', e => { dz.style.borderColor = 'var(--border-color)'; });
+        dz.addEventListener('drop', e => {
+            e.preventDefault(); dz.style.borderColor = 'var(--border-color)';
+            sbImages = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+            renderSbPreview();
+        });
+    }
+});
 
-// ============ DOUBAO DECOMPILE ============
+// ==================== DOUBAO DECOMPILE ====================
 function decGenerateTemplate() {
-    var taskType = getRadioVal('taskType') || '模型→真实摄影';
-    var spaceType = getRadioVal('spaceType') || '平层家装室内';
-    var designStyle = getSelectVal('designStyle') || '现代室内设计';
-    var customDesc = document.getElementById('customDesc').value.trim();
-    var weather = getRadioVal('weather') || '晴天';
-    var timeOfDay = getRadioVal('timeOfDay') || '上午9点';
-    var skyLight = getSelectVal('skyLight') || '晴天自然光';
-    var indoorLight = getSelectVal('indoorLight') || '日常照明模式';
-    var colorTemp = getSelectVal('colorTemp') || '中性光（4500K）';
-    var outdoorScene = getRadioVal('outdoorScene') || '根据参考图分析';
-    var toneStyle = getSelectVal('toneStyle') || '原生中性微暖色调';
-    var cameraModel = getSelectVal('cameraModel') || 'iPhone 17 Pro Max';
-    var aperture = getRadioVal('aperture') || 'f/5.6';
-    var focalLength = getRadioVal('focalLength') || '24mm';
-    var iso = getRadioVal('iso') || 'ISO 100';
-    var shutter = getRadioVal('shutter') || '1s';
-    var resolution = getSelectVal('resolution') || '8K';
-    var geomFidelity = getRadioVal('geomFidelity') || '强制几何保真';
-    var aspectRatio = getSelectVal('aspectRatio') || '保持原图';
-    var materialEnhance = getChecked('materialEnhance');
-    var raytrace = getChecked('raytrace');
-    var filmGrain = getChecked('filmGrain');
-    var doubaoPrompt = document.getElementById('doubaoPrompt').value.trim();
-
-    var perf = resolution + '分辨率';
-    if (getChecked('techHdr')) perf += '，HDR包围曝光';
-    if (getChecked('techTripod')) perf += '，三脚架长曝';
-    if (getChecked('techTilt')) perf += '，移轴矫正';
-    perf += '，室内纪实拍摄';
-
-    var template = {
-        "项目名称": spaceType + "场景" + (customDesc ? ' - ' + customDesc.substring(0,30) : ''),
-        "核心约束": {
-            "几何保真度": geomFidelity + "，严禁改变原始场景结构、物体位置和几何形状",
-            "物体完整性": "保持所有家具、灯具和装饰品的原始样式与比例",
-            "材质一致性": getRadioVal('materialConsistency') || '完全还原材质',
-            "出图比例": aspectRatio,
-            "转换逻辑": "将基础3D模型面转换为高精度、符合物理规律的真实材质(PBR)"
-        },
-        "场景与光效": {
-            "任务类型": taskType,
-            "空间类型": spaceType,
-            "设计风格": designStyle,
-            "天气": weather,
-            "时间": timeOfDay,
-            "天空光": skyLight,
-            "室内灯光": indoorLight,
-            "色温": colorTemp,
-            "外景": outdoorScene,
-            "后期色调": toneStyle
-        },
-        "摄影参数": {
-            "相机型号": cameraModel,
-            "光圈": aperture,
-            "焦距": focalLength,
-            "ISO": iso,
-            "快门": shutter,
-            "分辨率": resolution
-        },
-        "渲染精度": {
-            "画面表现": perf,
-            "PBR写实材质": materialEnhance ? '启用' : '未启用',
-            "光线追踪反射": raytrace ? '启用' : '未启用',
-            "胶片摄影质感": filmGrain ? '启用' : '未启用'
-        },
-        "豆包分析指令": doubaoPrompt
-    };
-
-    var jsonStr = JSON.stringify(template, null, 2);
-    var output = jsonStr + '\n\n// 帮我写提示词，用于AI室内设计渲染，要json格式';
-    document.getElementById('decTemplateOutput').value = output;
-    currentJsonOutput = template;
-    document.getElementById('outputJsonTab').textContent = jsonStr;
+    const doubaoPrompt = document.getElementById('doubaoPrompt').value.trim();
+    const template = buildNestedOutput();
+    // Inject doubao analysis instruction if provided
+    if (doubaoPrompt) template['豆包分析指令'] = doubaoPrompt;
+    const jsonStr = JSON.stringify(template, null, 2);
+    document.getElementById('decTemplateOutput').value = jsonStr + '\n\n// 帮我写提示词，用于AI室内设计渲染，要json格式';
     showToast('JSON模板已生成');
 }
-
 function decCopyTemplate() {
-    var text = document.getElementById('decTemplateOutput').value;
-    if (!text || text.indexOf('生成JSON提示词模板') > -1) { showToast('请先点击生成JSON模板'); return; }
+    const text = document.getElementById('decTemplateOutput').value;
+    if (!text || text.includes('生成JSON提示词模板')) { showToast('请先点击生成JSON模板'); return; }
     if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(function() { showToast('模板已复制到剪贴板'); });
+        navigator.clipboard.writeText(text).then(() => showToast('模板已复制到剪贴板'));
     } else {
-        var ta = document.createElement('textarea');
+        const ta = document.createElement('textarea');
         ta.value = text; document.body.appendChild(ta); ta.select();
         document.execCommand('copy'); ta.remove();
         showToast('模板已复制到剪贴板');
     }
 }
-
 function decCopyAndOpen() {
-    var text = document.getElementById('decTemplateOutput').value;
-    if (!text || text.indexOf('生成JSON提示词模板') > -1) { showToast('请先点击生成JSON模板'); return; }
+    const text = document.getElementById('decTemplateOutput').value;
+    if (!text || text.includes('生成JSON提示词模板')) { showToast('请先点击生成JSON模板'); return; }
     if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(function() {
+        navigator.clipboard.writeText(text).then(() => {
             window.open('https://www.doubao.com/chat/', '_blank');
             showToast('已复制并打开豆包');
         });
     } else {
-        var ta = document.createElement('textarea');
+        const ta = document.createElement('textarea');
         ta.value = text; document.body.appendChild(ta); ta.select();
         document.execCommand('copy'); ta.remove();
         window.open('https://www.doubao.com/chat/', '_blank');
@@ -1835,10 +1025,13 @@ function decCopyAndOpen() {
     }
 }
 
-// ============ INIT ============
-renderCollections();
-switchOutputTab('text');
-generatePrompt();
+// ==================== INIT ====================
+window.onload = () => {
+    initWeatherButtons();
+    loadConfig();
+    switchOutputTab('json');
+    renderCollections();
+};
 </script>
 </body>
 </html>
