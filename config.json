@@ -59,7 +59,7 @@
     "icon": "🎬",
     "title": "分镜制作",
     "fields": {
-      "分镜模式": { "type": "button-select", "options": ["2宫格", "4宫格", "6宫格", "9宫格", "自定义"], "default": "4宫格", "description": "分镜布局方式" },
+      "分镜模式": { "type": "button-select", "options": ["2宫格", "2*2", "4宫格", "3*3", "6宫格", "6*6", "9宫格", "自定义"], "default": "4宫格", "description": "分镜布局方式" },
       "分镜比例": { "type": "button-select", "options": ["16:9", "4:3", "1:1", "9:16"], "default": "16:9", "description": "分镜画面比例" }
     }
   }
