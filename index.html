@@ -856,9 +856,25 @@ function initWeatherButtons() {
 
 // ==================== LOAD CONFIG ====================
 async function loadConfig() {
+    const candidates = [currentConfigPath];
+    if (window.location.protocol === 'file:') {
+        candidates.push('https://yiyuqiao2748.github.io/prompt-studio/' + currentConfigPath);
+    }
+
+    let response = null;
+    let lastError = null;
+    for (const path of candidates) {
+        try {
+            response = await fetch(path);
+            if (!response.ok) throw new Error('配置文件加载失败');
+            break;
+        } catch (e) {
+            lastError = e;
+        }
+    }
+
     try {
-        const response = await fetch(currentConfigPath);
-        if (!response.ok) throw new Error('配置文件加载失败');
+        if (!response) throw lastError || new Error('配置文件加载失败');
         formSchema = await response.json();
         currentData = {};
         document.getElementById('tabBar').innerHTML = '';
