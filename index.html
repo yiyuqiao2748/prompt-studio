@@ -91,15 +91,6 @@
             min-height: 0;
             max-height: calc(100vh - 140px);
         }
-        .panel-wechat {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            padding-top: 8px;
-            margin-top: 8px;
-            border-top: 1px solid var(--border-color);
-        }
         .panel-wechat span {
             font-size: 0.78rem;
             color: var(--text-muted);
@@ -168,7 +159,7 @@
             border: 1px solid var(--border-color);
             transition: 0.2s;
         }
-        .card:hover { border-color: #3f3f46; }
+        .card:hover { border-color: #3f3f46; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -274,8 +265,7 @@
             padding: 16px;
             overflow-y: auto;
             background: #0c0c0e;
-            min-height: 0;
-            max-height: 50vh;
+            min-height: 200px;
         }
         pre {
             margin: 0;
@@ -488,8 +478,8 @@ let collections = [];
 try { collections = JSON.parse(localStorage.getItem('proprompt_collections') || '[]'); } catch(e) { collections = []; }
 
 // ==================== HELPERS ====================
-function escapeHtml(s) { return String(s).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>'); }
-function escapeAttr(s) { return String(s).replace(/&/g,'&').replace(/"/g,'"'); }
+function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function escapeAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
 function getFieldByKey(fk) {
     if (!formSchema) return null;
     for (const sk in formSchema) {
@@ -779,7 +769,7 @@ function buildSectionFields(section, grid) {
         } else {
             inner += '</div><div>';
             if (field.type === 'text') {
-                inner += '<input type="text" value="' + escapeAttr(iv) + '" oninput="updateData(\'' + fk + '\',this.value)">';
+                inner += '<input type="text" data-key="' + escapeAttr(fk) + '" value="' + escapeAttr(iv) + '" oninput="updateData(\'' + fk + '\',this.value)">';
             } else if (field.type === 'select') {
                 inner += '<select id="select-' + fk + '" onchange="handleSelectChange(\'' + fk + '\',this.value)">';
                 if (field.group && field.options && typeof field.options === 'object' && !Array.isArray(field.options)) {
@@ -833,6 +823,11 @@ function switchTab(tabId) {
 }
 
 function rebuildCurrentTab() {
+    // Commit focused text input before rebuilding to avoid losing in-progress text
+    const focused = document.activeElement;
+    if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA') && focused.dataset.key) {
+        updateData(focused.dataset.key, focused.value);
+    }
     const activeTab = document.querySelector('#tabBar .tab-btn.active');
     if (!activeTab) return;
     const tabId = activeTab.dataset.tab;
@@ -907,6 +902,7 @@ function copyOutput() {
 function saveToCollection() {
     const item = {
         time: new Date().toLocaleString(),
+        data: JSON.parse(JSON.stringify(currentData)),
         json: buildNestedOutput(),
         text: buildTextOutput()
     };
@@ -936,17 +932,26 @@ function renderCollections() {
 
 function loadCollection(i) {
     const item = collections[i];
-    if (item.json) {
+    if (!item) return;
+    if (item.data) {
+        currentData = JSON.parse(JSON.stringify(item.data));
+        // Switch to first form tab so rebuildCurrentTab targets it, not collections
+        const firstFormTab = document.querySelector('#tabBar .tab-btn[data-tab^="tab-"]:not([data-tab="tab-collections"])');
+        if (firstFormTab) switchTab(firstFormTab.dataset.tab);
+        rebuildCurrentTab();
+        updatePreview();
+        showToast('已加载收藏项');
+    } else if (item.json) {
         document.getElementById('json-preview').textContent = JSON.stringify(item.json, null, 2);
         document.getElementById('text-preview').textContent = item.text || '';
         document.getElementById('reversePrompt').textContent = buildReversePrompt();
-        showToast('已加载收藏项');
+        showToast('已加载预览（旧版收藏，表单状态未保存）');
     }
 }
 
 function deleteCollection(i) {
     collections.splice(i, 1);
-    localStorage.setItem('proprompt_collections', JSON.stringify(collections));
+    try { localStorage.setItem('proprompt_collections', JSON.stringify(collections)); } catch(e) { /* storage full */ }
     renderCollections();
     showToast('已删除');
 }
@@ -965,7 +970,7 @@ function renderSbPreview() {
         const reader = new FileReader();
         reader.onload = (ev) => {
             const img = document.createElement('div');
-            img.style.cssText = 'width:56px;height:56px;border-radius:6px;background:url(' + ev.target.result + ') center/cover;border:1px solid var(--border-color);position:relative';
+            img.style.cssText = 'width:96px;height:96px;border-radius:6px;background:url(' + ev.target.result + ') center/cover;border:1px solid var(--border-color);position:relative';
             img.innerHTML = '<span style="position:absolute;top:-4px;right:-4px;background:var(--primary-color);color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700">' + (i+1) + '</span>';
             container.appendChild(img);
         };
