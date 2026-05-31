@@ -1,0 +1,35 @@
+{
+  "name": "proprompt-style",
+  "version": "1.0.0",
+  "description": "",
+  "main": "appState.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yiyuqiao2748/prompt-studio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/yiyuqiao2748/prompt-studio/issues"
+  },
+  "homepage": "https://github.com/yiyuqiao2748/prompt-studio#readme",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14",
+    "vue-tsc": "^3.3.3"
+  },
+  "dependencies": {
+    "vue": "^3.5.35"
+  }
+}
