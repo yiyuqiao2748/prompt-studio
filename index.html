@@ -2,166 +2,215 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIN Nanobanana AI提示词生成器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>一术专用提示词</title>
     <style>
         :root {
-            --bg: #090b12;
-            --bg-float: rgba(255,255,255,0.06);
-            --card-bg: rgba(24, 25, 31, 0.72);
-            --card-border: rgba(255, 255, 255, 0.12);
-            --input-bg: rgba(255,255,255,0.08);
-            --border-color: rgba(255,255,255,0.08);
-            --text-main: #f4f6ff;
-            --text-muted: #b3b8ca;
-            --primary-color: #5d8cff;
-            --primary-color-strong: #3b82f6;
-            --success-color: #4ade80;
-            --radius-sm: 10px;
-            --radius-md: 18px;
-            --radius-lg: 24px;
+            --bg-color: #09090b;
+            --card-bg: #18181b;
+            --header-bg: rgba(9, 9, 11, 0.85);
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --success-color: #10b981;
+            --border-color: #27272a;
+            --input-bg: #09090b;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            width: 95%;
+            margin: 0 auto;
+        }
+
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background: radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 18%),
-                        radial-gradient(circle at bottom right, rgba(59,130,246,0.16), transparent 22%),
-                        linear-gradient(180deg, #08101d 0%, #05060b 100%);
-            color: var(--text-main);
-            font-family: -apple-system, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
+        header {
+            width: 100%;
+            background-color: var(--header-bg);
+            backdrop-filter: blur(12px);
+            padding: 12px 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .header-center {
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            overflow: hidden;
-            padding-top: env(safe-area-inset-top);
-            backdrop-filter: blur(20px);
-        }
-        header {
-            background: rgba(8, 10, 16, 0.72);
-            -webkit-backdrop-filter: blur(24px);
-            backdrop-filter: blur(24px);
-            padding: 18px 22px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
             text-align: center;
-            flex-shrink: 0;
-            box-shadow: 0 20px 80px rgba(0,0,0,0.18);
+            min-width: 0;
+            max-width: 100%;
         }
+
+        .header-center-row1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px 18px;
+        }
+
         .logo {
-            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            font-size: 1.65rem;
             font-weight: 700;
-            background: linear-gradient(90deg, #FFF16A, #FF4066);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: transparent;
+            letter-spacing: 0.5px;
         }
-        .subtitle {
-            font-size: 0.78rem;
+
+        .logo img {
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .nav-block { margin-bottom: 20px; }
+        .group-nav-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .group-tab {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .group-tab.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #fff;
+        }
+        .preset-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .preset-pill {
+            padding: 8px 16px;
+            border-radius: 999px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
             color: var(--text-muted);
-            margin-top: 4px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .weather-bar {
-            display: none;
+        .preset-pill.active {
+            background: linear-gradient(90deg, #f472b6, #fb923c);
+            border-color: transparent;
+            color: #0c0c0e;
+            font-weight: 600;
         }
-        .weather-btn {
-            display: none;
+
+        .header-center-row2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px 24px;
         }
+
+        .sponsor-banner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 18px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 100px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1.125rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .sponsor-banner img { height: 21px; }
+
+        .wechat-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.125rem;
+            color: var(--text-muted);
+        }
+        .wechat-box .copy-btn {
+            font-size: 1.05rem;
+            padding: 8px 15px;
+        }
+
+        @media (max-width: 720px) {
+            header {
+                padding: 12px 16px;
+                padding-left: max(16px, env(safe-area-inset-left));
+                padding-right: max(16px, env(safe-area-inset-right));
+            }
+            .logo { font-size: 1.5rem; }
+            .logo img { height: 33px; }
+            .sponsor-banner { font-size: 1.05rem; padding: 5px 14px; }
+            .sponsor-banner img { height: 19px; }
+            .wechat-box { font-size: 1.05rem; }
+            .wechat-box .copy-btn { font-size: 0.98rem; padding: 7px 12px; }
+            .group-tab { min-width: 100px; padding: 10px 12px; font-size: 0.85rem; }
+            .preset-pill { padding: 6px 12px; font-size: 0.8rem; }
+        }
+
         main {
             display: flex;
             flex: 1;
-            gap: 20px;
-            padding: 16px 20px;
             overflow: hidden;
-            max-width: 1300px;
-            width: 100%;
-            margin: 0 auto;
-            align-items: stretch;
-        }
-        #left-panel {
-            flex: 1;
-            padding: 18px 18px 20px 18px;
-            overflow-y: auto;
             min-height: 0;
-            max-height: calc(100vh - 140px);
-            background: rgba(18, 20, 28, 0.84);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: var(--radius-lg);
-            box-shadow: 0 30px 100px rgba(0,0,0,0.22);
-            backdrop-filter: blur(24px);
+            padding: 24px 40px;
+            padding-bottom: max(24px, env(safe-area-inset-bottom));
+            gap: 40px;
+            box-sizing: border-box;
         }
-        #right-panel {
-            width: 340px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            background: rgba(24,25,31,0.82);
-            border-radius: var(--radius-lg);
-            border: 1px solid rgba(255,255,255,0.12);
-            box-shadow: 0 24px 90px rgba(0,0,0,0.24);
-            backdrop-filter: blur(20px);
-            min-height: 0;
-            max-height: calc(100vh - 140px);
-        }
-        .panel-wechat {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid var(--border-color);
-        }
-        .panel-wechat span,
-        .wechat-box {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-        }
-        .tab-bar {
-            display: flex;
-            gap: 6px;
-            background: rgba(255,255,255,0.06);
-            padding: 8px;
-            border-radius: calc(var(--radius-lg) + 2px);
-            margin-bottom: 18px;
-            overflow-x: auto;
-            flex-shrink: 0;
-            border: 1px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(18px);
-        }
-        .tab-btn {
-            padding: 10px 16px;
-            font-size: 0.86rem;
-            border: none;
-            border-radius: calc(var(--radius-sm) + 2px);
-            background: rgba(255,255,255,0.04);
-            color: var(--text-muted);
-            cursor: pointer;
-            white-space: nowrap;
-            transition: 0.2s ease;
-            flex-shrink: 0;
-        }
-        .tab-btn.active { background: rgba(93,140,255,0.22); color: #fff; }
-        .tab-btn:hover { background: rgba(255,255,255,0.08); }
-        .tab-btn:hover { color: var(--text-main); }
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
-        .section-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+
+        #left-panel { flex: 1; overflow-y: auto; padding-right: 10px; min-height: 0; -webkit-overflow-scrolling: touch; }
+
+        .section-title { font-size: 1.1rem; font-weight: 600; margin: 32px 0 20px 0; display: flex; align-items: center; gap: 10px; }
+        .section-title:first-child { margin-top: 0; }
+
         .grid-container {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 14px;
-            margin-bottom: 28px;
+            gap: 20px;
+            align-items: stretch;
         }
+
         @media (max-width: 1500px) {
             .grid-container { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         }
@@ -171,1043 +220,1092 @@
         @media (max-width: 640px) {
             .grid-container { grid-template-columns: minmax(0, 1fr); }
         }
+
         @media (max-width: 900px) {
-            main { flex-direction: column; padding: 12px 16px; gap: 16px; }
-            #left-panel { flex: 0 0 auto; overflow: visible; padding-right: 0; }
-            #right-panel { width: 100%; max-height: none; min-height: 0; }
+            body {
+                padding-top: env(safe-area-inset-top);
+            }
+            main {
+                flex-direction: column;
+                flex: 1;
+                min-height: 0;
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+                padding: 12px 16px;
+                padding-bottom: max(16px, env(safe-area-inset-bottom));
+                padding-left: max(16px, env(safe-area-inset-left));
+                padding-right: max(16px, env(safe-area-inset-right));
+                gap: 16px;
+            }
+            #left-panel {
+                flex: 0 0 auto;
+                padding-right: 0;
+                overflow: visible;
+            }
+            #right-panel {
+                width: 100%;
+                flex: 0 0 auto;
+                margin-top: 0;
+                max-height: none;
+                min-height: 0;
+                border-radius: var(--radius-lg);
+            }
+            .preview-header {
+                padding: 12px 14px;
+                gap: 8px;
+            }
+            #preview-content {
+                flex: none;
+                min-height: 120px;
+                max-height: min(55vh, 480px);
+                overflow-y: auto;
+                padding: 12px 14px;
+            }
+            .preview-top-row {
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: flex-start;
+            }
+            .copy-btn {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+                min-height: 36px;
+            }
         }
+
         .card {
-            background: rgba(15, 17, 24, 0.72);
-            border-radius: var(--radius-md);
-            padding: 18px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            border: 1px solid var(--card-border);
-            box-shadow: 0 24px 60px rgba(0,0,0,0.22);
-            backdrop-filter: blur(18px);
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .card:hover { border-color: rgba(93,140,255,0.3); transform: translateY(-2px); box-shadow: 0 26px 80px rgba(0,0,0,0.28); }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-        .card-title-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .card-label { font-size: 0.88rem; font-weight: 600; }
-        .card-description { font-size: 0.73rem; color: var(--text-muted); line-height: 1.4; }
-        .selected-value { font-size: 0.7rem; padding: 2px 8px; border-radius: 100px; font-weight: 500; color: var(--primary-color); background: rgba(59, 130, 246, 0.12); }
-        .selected-value.empty { color: var(--text-muted); background: rgba(255,255,255,0.05); }
-        select, input[type="text"] {
-            background: rgba(255,255,255,0.08);
-            color: var(--text-main);
-            border: 1px solid rgba(255,255,255,0.12);
-            padding: 10px 14px;
-            border-radius: calc(var(--radius-sm) - 2px);
-            font-size: 0.9rem;
-            width: 100%;
-            outline: none;
-            backdrop-filter: blur(18px);
-        }
-        select:focus, input[type="text"]:focus { border-color: rgba(93,140,255,0.8); box-shadow: 0 0 0 4px rgba(93,140,255,0.08); }
-        .pill-group { display: flex; flex-wrap: wrap; gap: 6px; }
-        .pill-label { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
-        .pill-label input[type="checkbox"], .pill-label input[type="radio"] {
-            appearance: none; -webkit-appearance: none; position: absolute;
-            width: 0; height: 0; opacity: 0; margin: 0; padding: 0; border: 0; pointer-events: none;
-        }
-        .pill-text {
-            display: inline-block;
-            background: var(--input-bg);
-            color: var(--text-muted);
-            padding: 5px 10px;
-            border-radius: 100px;
-            font-size: 0.78rem;
-            cursor: pointer;
+            gap: 16px;
             border: 1px solid var(--border-color);
+            transition: 0.2s;
+            min-height: 0;
+            height: 100%;
+            box-sizing: border-box;
         }
-        .pill-label input:checked + .pill-text {
-            background: rgba(59, 130, 246, 0.15);
-            color: var(--primary-color);
-            border-color: var(--primary-color);
+        .card:hover { border-color: #3f3f46; }
+
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .card-title-group { display: flex; flex-direction: column; gap: 6px; }
+        .card-label { font-size: 0.95rem; font-weight: 600; }
+        .card-description { font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; margin: 0; max-width: 100%; }
+
+        .selected-value { font-size: 0.75rem; color: var(--primary-color); background: rgba(59, 130, 246, 0.12); padding: 3px 10px; border-radius: 100px; font-weight: 500; }
+        .selected-value.empty { color: var(--text-muted); background: rgba(255, 255, 255, 0.05); }
+
+        select, input[type="text"], textarea { background-color: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 10px 14px; border-radius: var(--radius-md); font-size: 0.9rem; width: 100%; box-sizing: border-box; outline: none; font-family: inherit; }
+        textarea.custom-input { resize: none; overflow: hidden; min-height: 38px; line-height: 1.5; }
+
+        .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .pill-label {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .pill-label input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            position: absolute;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            pointer-events: none;
+        }
+        .pill-text { display: inline-block; background-color: var(--input-bg); color: var(--text-muted); padding: 6px 12px; border-radius: 100px; font-size: 0.8rem; cursor: pointer; border: 1px solid var(--border-color); }
+        .pill-label input:checked + .pill-text { background-color: rgba(59, 130, 246, 0.15); color: var(--primary-color); border-color: var(--primary-color); }
+
+        .pill-group-single .pill-label input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            position: absolute;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            pointer-events: none;
         }
         .pill-group-single .pill-label input:checked + .pill-text {
-            background: rgba(168, 85, 247, 0.18);
+            background-color: rgba(168, 85, 247, 0.18);
             color: #d8b4fe;
             border-color: #a855f7;
         }
-        .switch { position: relative; display: inline-block; width: 38px; height: 19px; flex-shrink: 0; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background: #27272a; transition: .3s; border-radius: 19px;
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 13px; width: 13px;
-            left: 3px; bottom: 3px; background: #a1a1aa; transition: .3s; border-radius: 50%;
-        }
-        input:checked + .slider { background: var(--primary-color); }
-        input:checked + .slider:before { transform: translateX(19px); background: #fff; }
-        .hidden-adder { display: none; gap: 6px; margin-top: 6px; }
-        .hidden-adder.active { display: flex; }
-        .preview-header {
-            padding: 18px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: rgba(255,255,255,0.04);
-            backdrop-filter: blur(18px);
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        .preview-title {
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-        }
-        .output-tabs { display: flex; gap: 4px; margin-bottom: 0; }
-        .out-tab-btn {
-            padding: 4px 10px;
-            font-size: 0.7rem;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            background: var(--card-bg);
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-        .out-tab-btn.active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
-        .copy-btn {
-            background: rgba(255,255,255,0.06);
-            color: var(--text-main);
-            border: 1px solid rgba(255,255,255,0.12);
-            padding: 8px 14px;
-            border-radius: calc(var(--radius-sm) + 2px);
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-            backdrop-filter: blur(16px);
-        }
-        .copy-btn:hover { background: rgba(255,255,255,0.12); transform: translateY(-1px); }
-        .copy-btn:hover { border-color: #52525b; }
-        #preview-content {
-            flex: 1;
-            padding: 18px;
-            overflow-y: auto;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: var(--radius-md);
-            min-height: 200px;
-            backdrop-filter: blur(18px);
-        }
-        pre {
-            margin: 0;
-            font-family: "Menlo", "Cascadia Code", monospace;
-            font-size: 0.7rem;
-            color: #a6accd;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-        .reverse-box {
-            padding: 12px 16px;
-            font-size: 0.65rem;
-            color: #71717a;
-            border-top: 1px solid var(--border-color);
-            background: #0a0a0c;
-            line-height: 1.5;
-            max-height: 80px;
-            overflow-y: auto;
-        }
+
+        #right-panel { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; background-color: var(--card-bg); border-radius: var(--radius-lg); border: 1px solid var(--border-color); }
+        .preview-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: flex-start; flex-direction: column; gap: 10px; }
+        .preview-top-row { display: flex; width: 100%; justify-content: space-between; align-items: center; }
+        .preview-title { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); letter-spacing: 1px; }
+
+        .copy-btn { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.7rem; transition: 0.2s; }
+        .wechat-btn { background: rgba(16, 185, 129, 0.1); color: var(--success-color); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .doubao-btn-open { background: #ff7f27; color: #fff; border: 1px solid #ff7f27; }
+        .doubao-btn-open:hover { background: #e66f1f; border-color: #e66f1f; }
+        .doubao-btn-copy { background: #333; color: #fff; border: 1px solid #444; }
+        .doubao-btn-copy:hover { background: #444; border-color: #555; }
+
+        #preview-content { flex: 1; padding: 20px; overflow-y: auto; background: #0c0c0e; min-height: 0; }
+        pre { margin: 0; font-family: "Menlo", monospace; font-size: 0.75rem; color: #a6accd; line-height: 1.5; white-space: pre-wrap; }
+
         .panel-wechat {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            padding-top: 8px;
-            margin-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        .wechat-btn { background: rgba(16,185,129,0.1); color: var(--success-color); border-color: rgba(16,185,129,0.2); }
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--primary-color);
-            color: #fff;
-            padding: 8px 20px;
-            border-radius: 100px;
-            font-size: 0.82rem;
-            z-index: 999;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .toast.show { opacity: 1; }
-
-        /* Storyboard */
-        .sb-drop-zone {
-            border: 2px dashed var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 24px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-        .sb-drop-zone:hover { border-color: #52525b; }
-        .sb-preview { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-
-        /* Collections */
-        .collection-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.78rem;
-            gap: 8px;
-        }
-        .collection-item span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .collection-item button {
-            padding: 3px 8px;
-            font-size: 0.65rem;
-            border: none;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            background: var(--input-bg);
-            color: var(--text-muted);
-            margin-left: 4px;
-        }
-        .collection-item button:hover { background: var(--primary-color); color: #fff; }
-
-        /* Dec decompile textarea */
-        .dec-output {
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px 10px;
             width: 100%;
-            min-height: 120px;
-            background: var(--input-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 10px;
-            font-family: "Menlo", monospace;
-            font-size: 0.7rem;
-            resize: vertical;
             margin-top: 8px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
         }
-        textarea.card-input {
-            background: var(--input-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 8px 12px;
-            font-size: 0.82rem;
-            width: 100%;
-            resize: vertical;
+        .panel-wechat .wechat-box {
+            font-size: 0.9rem;
+            color: var(--text-muted);
         }
+        .panel-wechat .copy-btn {
+            font-size: 0.75rem;
+            padding: 6px 12px;
+        }
+
+        .weather-bar {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;
+        }
+        .weather-btn {
+            padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border-color);
+            background: var(--card-bg); color: var(--text-main); font-size: 0.92rem; cursor: pointer; transition: 0.2s;
+        }
+        .weather-btn.active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+        .weather-btn.custom.active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+
+        .hidden-adder { display: none; gap: 8px; margin-top: 8px; }
+        .hidden-adder.active { display: flex; align-items: flex-start; }
+
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #27272a; transition: .3s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: #a1a1aa; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(20px); background-color: white; }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">LIN 香蕉Nanobanana/GPT-image2 AI提示词生成器</div>
-        <div class="subtitle">小白零门槛，一键搞定提示词!</div>
+        <div class="header-center">
+            <div class="header-center-row1">
+                <div class="logo">
+                    <span style="font-weight: bold;
+  background: -webkit-linear-gradient(left, #FFF16A, #FF4066);background-clip: text;color: transparent;">一术专用提示词</span>
+                </div>
+            </div>
+
+            <div style="font-size: 28px;
+  font-weight: bold;
+  background: -webkit-linear-gradient(left, #FFF16A, #FF4066);background-clip: text;color: transparent;">小白零门槛，一键搞定提示词!</div>
+            <div style="font-size:.85rem;color:var(--text-muted)">
+                适配 Nanobanana / GPT-image2 · 覆盖 室内 / 建筑 / 景观 三大领域</div>
+        </div>
     </header>
 
     <main>
         <div id="left-panel">
-            <div id="urlPresetBanner" style="padding:12px 16px;color:var(--text-muted);font-size:0.9rem;border-radius:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(14px);margin-bottom:14px;">
-                URL 预设加载中...
+            <div class="nav-block">
+                <div class="group-nav-bar" id="groupNavBar"></div>
+                <div class="preset-bar" id="presetNavBar"></div>
             </div>
-            <div class="tab-bar" id="tabBar"></div>
-            <div id="tabContent">
-                <div id="dynamicPanels"></div>
-                <!-- Storyboard Panel -->
-                <div class="tab-panel" id="tab-storyboard">
-                    <div class="section-title">🎬 分镜制作</div>
-                    <div class="grid-container">
-                        <div class="card" style="grid-column: span 2;">
-                            <div class="card-title-group">
-                                <span class="card-label">参考图片</span>
-                                <p class="card-description">拖拽或点击上传参考图片</p>
-                            </div>
-                            <div class="sb-drop-zone" id="sbDropZone" onclick="document.getElementById('sbFileInput').click()">
-                                📁 点击或拖拽图片到此处
-                            </div>
-                            <input type="file" id="sbFileInput" multiple accept="image/*" style="display:none" onchange="handleSbFiles(this.files)">
-                            <div class="sb-preview" id="sbPreview"></div>
-                        </div>
-                        <div class="card" style="grid-column: span 2;">
-                            <div class="card-title-group">
-                                <span class="card-label">基础提示词</span>
-                            </div>
-                            <textarea class="card-input" id="storyboardPrompt" placeholder="描述你需要实现的效果" style="min-height:80px">专业室内设计摄影</textarea>
-                        </div>
-                    </div>
-                    <div style="margin-top:12px">
-                        <button class="copy-btn" style="background:var(--primary-color);color:#fff;padding:10px 24px;font-size:0.85rem" onclick="generateStoryboard()">生成分镜提示词 & 打开豆包</button>
-                    </div>
-                </div>
-
-                <!-- Doubao Decompile Panel -->
-                <div class="tab-panel" id="tab-doubao">
-                    <div class="section-title">🔍 豆包指令反解</div>
-                    <div class="grid-container">
-                        <div class="card" style="grid-column: span 2;">
-                            <div class="card-title-group">
-                                <span class="card-label">豆包分析指令</span>
-                                <p class="card-description">粘贴豆包/其他AI生成的参考参数，自动反解出JSON模板</p>
-                            </div>
-                            <textarea class="card-input" id="doubaoPrompt" placeholder="粘贴豆包或其他AI生成的参数..." style="min-height:100px"></textarea>
-                        </div>
-                    </div>
-                    <textarea class="dec-output" id="decTemplateOutput" placeholder="点击下方按钮生成JSON提示词模板">点击下方按钮生成JSON提示词模板</textarea>
-                    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-                        <button class="copy-btn" style="background:var(--primary-color);color:#fff" onclick="decGenerateTemplate()">生成JSON模板</button>
-                        <button class="copy-btn" onclick="decCopyTemplate()">复制模板</button>
-                        <button class="copy-btn" style="background:var(--success-color);color:#fff" onclick="decCopyAndOpen()">复制并打开豆包</button>
-                    </div>
-                </div>
-
-                <!-- Collections Panel -->
-                <div class="tab-panel" id="tab-collections">
-                    <div class="section-title">📁 收藏管理</div>
-                    <div id="collectionList"></div>
-                </div>
+            <div class="weather-bar" id="weatherBar"></div>
+            <div id="form-container">
+                <div id="message-box" style="text-align: center; padding: 40px; color: var(--text-muted);">正在加载配置...</div>
             </div>
         </div>
 
         <div id="right-panel">
-            <div class="preview-header">
-                <div class="preview-title">📋 JSON 提示词</div>
-                <div class="output-tabs">
-                    <button class="out-tab-btn active" onclick="switchOutputTab('json')">JSON</button>
-                    <button class="out-tab-btn" onclick="switchOutputTab('text')">文本</button>
-                </div>
-            </div>
+            <span class="preview-title" style="font-size: 20px;text-align: center;margin: 10px 0;">JSON 提示词</span>
             <div id="preview-content">
                 <pre id="json-preview">{}</pre>
-                <pre id="text-preview" style="display:none;"></pre>
             </div>
-            <div class="reverse-box" id="reversePrompt"></div>
-            <div class="preview-header" style="border-top:1px solid var(--border-color); border-bottom:none;">
-                <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                    <button class="copy-btn" onclick="copyOutput()">复制当前</button>
-                    <button class="copy-btn" onclick="saveToCollection()">保存收藏</button>
+            <div class="preview-header" style="border-top: 1px solid var(--border-color); margin-top: 0;">
+                <div class="preview-top-row">
+                    <div style="display: flex; gap: 6px; margin: 0 auto; flex-wrap: wrap; justify-content: center;">
+                        <button type="button" class="copy-btn" onclick="copyJson(this)">复制JSON</button>
+                        <button type="button" class="copy-btn doubao-btn-open" onclick="openDoubao()">跳转豆包</button>
+                        <button type="button" class="copy-btn doubao-btn-copy" onclick="copyAndOpenDoubao(this)">复制跳转</button>
+                    </div>
                 </div>
                 <div class="panel-wechat">
-                    <div class="wechat-box">微信号: <span id="wechatId">LinDesign666</span></div>
-                    <button class="copy-btn" onclick="copyWeChat()">复制</button>
+                    <div class="wechat-box">
+                        <span>微信号: <span class="wechat-val">一术</span></span>
+                    </div>
+                    <button type="button" class="copy-btn wechat-btn" onclick="copyWeChat(this)">复制</button>
                 </div>
             </div>
         </div>
     </main>
 
-    <div class="toast" id="toast"></div>
+    <script>
+        const WECHAT_ID = "一术";
+        const DOUBAO_URL = 'https://www.doubao.com/chat/';
 
-<script>
-// ==================== GLOBAL STATE ====================
+        // 天气配置
+        const weatherConfig = {
+            sunny: { prompt: "晴天，明亮的阳光，清晰的天空，柔和的自然光，高质量细节", icon: "☀️", name: "晴天" },
+            cloudy: { prompt: "阴天，柔和的散射光，平静的氛围，细节清晰，高画质", icon: "☁️", name: "阴天" },
+            rainy: { prompt: "雨天，湿润的地面，雨滴效果，朦胧氛围，电影级质感", icon: "🌧️", name: "雨天" },
+            windy: { prompt: "风天，发丝与衣物飘动，自然动态，清爽氛围，细节丰富", icon: "💨", name: "风天" }
+        };
+        let currentWeather = 'sunny';
 
-let formSchema = null;
-let currentData = {};
-let currentOutputMode = 'json';
-let currentConfigPath = 'config.json';
+        // 通用：拍摄技法选项
+        const SHOOTING_TECHNIQUES = ["单张直出", "HDR包围曝光", "景深合成", "全景拼接", "长曝光", "焦点堆叠"];
+        // 通用：人物宠物选项
+        const PEOPLE_PETS = ["无人物宠物", "含人物（自然活动）", "含宠物（自然状态）", "含人物与宠物"];
 
-let collections = [];
-try { collections = JSON.parse(localStorage.getItem('proprompt_collections') || '[]'); } catch(e) { collections = []; }
+        // 配置数据 - 完全对齐参考站格式（文本描述型）
+        const configData = {
+            "室内设计": {
+                "icon": "🏠", "name": "室内设计", "hasWeather": true,
+                "sections": {},
+                "presets": [
+                    {
+                        "key": "default", "name": "默认配置",
+                        "sections": {
+                            "图生图任务指令": {
+                                "icon": "🎯", "title": "图生图任务指令",
+                                "fields": {
+                                    "图生图任务": { "label": "图生图任务", "type": "text", "default": "将sketchup软件模型截图转真实摄影照片", "description": "描述任务转换目标" },
+                                    "转换逻辑": { "label": "转换逻辑", "type": "text", "default": "基于模型截图进行写实转换，将所有模型表面替换为高精度 PBR 物理写实材质，严格遵循物理渲染原理，光影、反射、折射完全物理正确，具备真实粗糙度、金属度与法线细节，材质表现完全符合现实世界物理规律。", "description": "核心转换逻辑描述" }
+                                }
+                            },
+                            "场景类型": {
+                                "icon": "🏠", "title": "场景类型",
+                                "fields": {
+                                    "空间类型": { "label": "空间类型", "type": "text", "default": "平层家装室内空间", "description": "空间类型描述" },
+                                    "设计风格": { "label": "设计风格", "type": "text", "default": "现代室内设计", "description": "设计风格描述" },
+                                    "外景类型": { "label": "外景类型", "type": "text", "default": "高楼层视野、俯瞰整个小区、远处的城市建筑、开阔的天空，窗外景观仅为外景贴图，仅提供环境氛围，不改变室内主光源，需要高清4K，超精细完整细节", "description": "窗外外景描述" },
+                                    "地点": { "label": "地点", "type": "text", "default": "南京", "description": "地理位置" }
+                                }
+                            },
+                            "光影氛围类型": {
+                                "icon": "🌅", "title": "光影氛围类型",
+                                "fields": {
+                                    "季节": { "label": "季节", "type": "text", "default": "夏季", "description": "季节设定" },
+                                    "天气": { "label": "天气", "type": "text", "default": "晴天", "description": "天气条件" },
+                                    "时间段": { "label": "时间段", "type": "text", "default": "上午9点", "description": "一天中的时段" },
+                                    "窗帘类型": { "label": "窗帘类型", "type": "text", "default": "模型截图的窗帘类型，必须准确识别，禁止乱改动。", "description": "窗帘类型描述" },
+                                    "进光口控制": { "label": "进光口控制", "type": "text", "default": "唯一主光源来自窗户，自然光从窗户单向稳定入射，严格遵循真实物理光照规律，禁止非窗户方向光源、禁止顶面打光、禁止侧面补光、禁止电视墙方向打光，禁止瞎打光、禁止乱补光，禁止AI乱加光源。", "description": "光源控制指令" },
+                                    "太阳光光影": { "label": "太阳光光影", "type": "text", "default": "完全无直射阳光进入室内，所有室外光线均为均匀漫射天光，无任何光斑，玻璃仅透过柔和的环境光，无直射光线穿透", "description": "太阳光效果描述" },
+                                    "室内光": { "label": "室内光", "type": "text", "default": "室内无灯光，纯自然光场景，柔和自然漫射光", "description": "室内灯光描述" },
+                                    "室内灯光色温": { "label": "室内灯光色温", "type": "text", "default": "整体光线的色温在4500K，中性光。", "description": "色温描述" },
+                                    "后期色调": { "label": "后期色调", "type": "text", "default": "原生中性微暖后期调色，色彩平衡自然柔和，真实还原材质本色，无过度修饰无色彩失真。", "description": "后期调色描述" },
+                                    "光影品质": { "label": "光影品质", "type": "text", "default": "影调原生自然，以自然光为唯一主导，明暗过渡真实平缓，对比适中克制，无额外人工补光、无人工光影修饰、最少后期干预，亮部柔和自然，暗部保留原生细节，还原空间真实光影状态，整体光影质朴写实、还原肉眼所见真实感。", "description": "光影品质要求" },
+                                    "室内人物、宠物配置": { "label": "室内人物、宠物配置", "type": "text", "default": "无人物宠物", "description": "人物宠物配置" }
+                                }
+                            },
+                            "摄影参数": {
+                                "icon": "📷", "title": "摄影参数",
+                                "fields": {
+                                    "相机的型号": { "label": "相机的型号", "type": "text", "default": "Hasselblad X2D 100C", "description": "虚拟相机型号" },
+                                    "光圈": { "label": "光圈", "type": "text", "default": "f/8", "description": "光圈大小" },
+                                    "快门速度": { "label": "快门速度", "type": "text", "default": "5s", "description": "快门速度" },
+                                    "ISO": { "label": "ISO", "type": "text", "default": "100", "description": "感光度" },
+                                    "全画幅等效焦距": { "label": "全画幅等效焦距", "type": "text", "default": "24mm", "description": "镜头焦距" },
+                                    "拍摄技法": { "label": "拍摄技法", "type": "multi-select", "options": SHOOTING_TECHNIQUES, "default": ["单张直出"], "description": "拍摄技法选择" }
+                                }
+                            },
+                            "核心约束": {
+                                "icon": "🔒", "title": "核心约束",
+                                "fields": {
+                                    "几何保真度": { "label": "几何保真度", "type": "text", "default": "强制几何保真，固定空间结构、墙体轮廓、门窗位置、家具尺寸与摆放位置，保持透视、比例、形状完全一致，严禁任何结构修改、形变、位移或重构", "description": "几何保真约束" },
+                                    "物体完整一致性": { "label": "物体完整一致性", "type": "text", "default": "所有物体保持完整一致，原样保留，禁止新增、删除、替换任何物件。", "description": "物体完整性约束" },
+                                    "材质完整一致性": { "label": "材质完整一致性", "type": "text", "default": "材质质感为PBR写实材质质感，100%还原模型贴图颜色纹理，禁止修改", "description": "材质一致性约束" },
+                                    "材质精准定义": { "label": "材质精准定义", "type": "text", "default": "100%识别模型贴图颜色纹理", "description": "材质精准度约束" }
+                                }
+                            },
+                            "出图参数": {
+                                "icon": "🖼️", "title": "出图参数",
+                                "fields": {
+                                    "出图比例": { "label": "出图比例", "type": "text", "default": "100%保持原图比例", "description": "输出画面比例" },
+                                    "分辨率": { "label": "分辨率", "type": "text", "default": "8K 超高清分辨率，超高像素密度，极度清晰，超精细完整细节", "description": "出图分辨率描述" }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "key": "luxury", "name": "豪华配置",
+                        "sections": {
+                            "图生图任务指令": {
+                                "icon": "🎯", "title": "图生图任务指令",
+                                "fields": {
+                                    "图生图任务": { "label": "图生图任务", "type": "text", "default": "将3dsmax高级渲染效果图转真实摄影照片", "description": "描述任务转换目标" },
+                                    "转换逻辑": { "label": "转换逻辑", "type": "text", "default": "基于高级渲染效果图进行超写实转换，将所有渲染表面替换为电影级 PBR 物理写实材质，严格遵循物理渲染原理，光影、反射、折射、焦散完全物理正确，具备真实粗糙度、金属度、法线、置换与次表面散射细节，材质表现完全符合现实世界物理规律，达到照片级欺骗视觉的效果。", "description": "核心转换逻辑描述" }
+                                }
+                            },
+                            "场景类型": {
+                                "icon": "🏠", "title": "场景类型",
+                                "fields": {
+                                    "空间类型": { "label": "空间类型", "type": "text", "default": "别墅家装室内空间，挑高客厅", "description": "空间类型描述" },
+                                    "设计风格": { "label": "设计风格", "type": "text", "default": "法式轻奢风格，大理石地面，水晶吊灯，丝绒软装，金属线条装饰，高级定制家具", "description": "设计风格描述" },
+                                    "外景类型": { "label": "外景类型", "type": "text", "default": "私家花园景观、远处的欧式建筑、开阔的天空，窗外景观仅为外景贴图，仅提供环境氛围，不改变室内主光源，需要高清4K，超精细完整细节", "description": "窗外外景描述" },
+                                    "地点": { "label": "地点", "type": "text", "default": "上海", "description": "地理位置" }
+                                }
+                            },
+                            "光影氛围类型": {
+                                "icon": "🌅", "title": "光影氛围类型",
+                                "fields": {
+                                    "季节": { "label": "季节", "type": "text", "default": "春季", "description": "季节设定" },
+                                    "天气": { "label": "天气", "type": "text", "default": "晴天", "description": "天气条件" },
+                                    "时间段": { "label": "时间段", "type": "text", "default": "下午3点", "description": "一天中的时段" },
+                                    "窗帘类型": { "label": "窗帘类型", "type": "text", "default": "法式纱帘，柔和透光，营造浪漫光影氛围", "description": "窗帘类型描述" },
+                                    "进光口控制": { "label": "进光口控制", "type": "text", "default": "主光源来自巨型落地窗，自然光从窗户单向稳定入射，辅以室内水晶吊灯提供暖色氛围补光，严格遵循真实物理光照规律，禁止AI乱加光源。", "description": "光源控制指令" },
+                                    "太阳光光影": { "label": "太阳光光影", "type": "text", "default": "柔和的阳光透过纱帘投射在大理石地面，形成细腻的光影纹理，光影过渡自然柔和", "description": "太阳光效果描述" },
+                                    "室内光": { "label": "室内光", "type": "text", "default": "水晶吊灯提供暖色氛围光，壁灯辅助照明，混合层次灯光，营造奢华温馨氛围", "description": "室内灯光描述" },
+                                    "室内灯光色温": { "label": "室内灯光色温", "type": "text", "default": "整体光线的色温在3000K，暖白光，温馨舒适。", "description": "色温描述" },
+                                    "后期色调": { "label": "后期色调", "type": "text", "default": "电影感青橙调色，高光偏暖，阴影偏冷，色彩饱和度适中，画面质感高级。", "description": "后期调色描述" },
+                                    "光影品质": { "label": "光影品质", "type": "text", "default": "影调高级感，以自然光为主导、室内灯光为辅，明暗过渡细腻，对比适中，亮部柔和自然，暗部保留丰富细节，整体光影奢华写实、具有杂志大片质感。", "description": "光影品质要求" },
+                                    "室内人物、宠物配置": { "label": "室内人物、宠物配置", "type": "text", "default": "无人物宠物", "description": "人物宠物配置" }
+                                }
+                            },
+                            "摄影参数": {
+                                "icon": "📷", "title": "摄影参数",
+                                "fields": {
+                                    "相机的型号": { "label": "相机的型号", "type": "text", "default": "Hasselblad X2D 100C", "description": "虚拟相机型号" },
+                                    "光圈": { "label": "光圈", "type": "text", "default": "f/2.8", "description": "光圈大小" },
+                                    "快门速度": { "label": "快门速度", "type": "text", "default": "1/250s", "description": "快门速度" },
+                                    "ISO": { "label": "ISO", "type": "text", "default": "50", "description": "感光度" },
+                                    "全画幅等效焦距": { "label": "全画幅等效焦距", "type": "text", "default": "35mm", "description": "镜头焦距" },
+                                    "拍摄技法": { "label": "拍摄技法", "type": "multi-select", "options": SHOOTING_TECHNIQUES, "default": ["单张直出"], "description": "拍摄技法选择" }
+                                }
+                            },
+                            "核心约束": {
+                                "icon": "🔒", "title": "核心约束",
+                                "fields": {
+                                    "几何保真度": { "label": "几何保真度", "type": "text", "default": "强制几何保真，固定空间结构、墙体轮廓、门窗位置、家具尺寸与摆放位置，保持透视、比例、形状完全一致，严禁任何结构修改、形变、位移或重构", "description": "几何保真约束" },
+                                    "物体完整一致性": { "label": "物体完整一致性", "type": "text", "default": "所有物体保持完整一致，原样保留，禁止新增、删除、替换任何物件。", "description": "物体完整性约束" },
+                                    "材质完整一致性": { "label": "材质完整一致性", "type": "text", "default": "材质质感为PBR写实材质质感，100%还原模型贴图颜色纹理，禁止修改", "description": "材质一致性约束" },
+                                    "材质精准定义": { "label": "材质精准定义", "type": "text", "default": "100%识别模型贴图颜色纹理，精准还原大理石纹路、木纹肌理、金属光泽、织物质感", "description": "材质精准度约束" }
+                                }
+                            },
+                            "出图参数": {
+                                "icon": "🖼️", "title": "出图参数",
+                                "fields": {
+                                    "出图比例": { "label": "出图比例", "type": "text", "default": "16:9 宽屏比例", "description": "输出画面比例" },
+                                    "分辨率": { "label": "分辨率", "type": "text", "default": "8K 超高清分辨率，超高像素密度，极度清晰，超精细完整细节", "description": "出图分辨率描述" }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "key": "minimal", "name": "极简配置",
+                        "sections": {
+                            "图生图任务指令": {
+                                "icon": "🎯", "title": "图生图任务指令",
+                                "fields": {
+                                    "图生图任务": { "label": "图生图任务", "type": "text", "default": "将sketchup软件模型截图转真实摄影照片", "description": "描述任务转换目标" },
+                                    "转换逻辑": { "label": "转换逻辑", "type": "text", "default": "基于模型截图进行写实转换，将所有模型表面替换为高精度 PBR 物理写实材质，严格保持原始几何结构、物体位置和比例关系，还原真实光照和阴影效果。", "description": "核心转换逻辑描述" }
+                                }
+                            },
+                            "场景类型": {
+                                "icon": "🏠", "title": "场景类型",
+                                "fields": {
+                                    "空间类型": { "label": "空间类型", "type": "text", "default": "平层家装室内空间", "description": "空间类型描述" },
+                                    "设计风格": { "label": "设计风格", "type": "text", "default": "极简风格，简洁干净，白色为主，少即是多，功能至上", "description": "设计风格描述" },
+                                    "外景类型": { "label": "外景类型", "type": "text", "default": "窗外景观仅为外景贴图，仅提供环境氛围，不改变室内主光源", "description": "窗外外景描述" },
+                                    "地点": { "label": "地点", "type": "text", "default": "北京", "description": "地理位置" }
+                                }
+                            },
+                            "光影氛围类型": {
+                                "icon": "🌅", "title": "光影氛围类型",
+                                "fields": {
+                                    "季节": { "label": "季节", "type": "text", "default": "夏季", "description": "季节设定" },
+                                    "天气": { "label": "天气", "type": "text", "default": "晴天", "description": "天气条件" },
+                                    "时间段": { "label": "时间段", "type": "text", "default": "上午9点", "description": "一天中的时段" },
+                                    "窗帘类型": { "label": "窗帘类型", "type": "text", "default": "模型截图的窗帘类型，必须准确识别，禁止乱改动。", "description": "窗帘类型描述" },
+                                    "进光口控制": { "label": "进光口控制", "type": "text", "default": "唯一主光源来自窗户，自然光从窗户单向稳定入射，严格遵循真实物理光照规律，禁止非窗户方向光源，禁止AI乱加光源。", "description": "光源控制指令" },
+                                    "太阳光光影": { "label": "太阳光光影", "type": "text", "default": "完全无直射阳光进入室内，所有室外光线均为均匀漫射天光", "description": "太阳光效果描述" },
+                                    "室内光": { "label": "室内光", "type": "text", "default": "室内无灯光，纯自然光场景，柔和自然漫射光", "description": "室内灯光描述" },
+                                    "室内灯光色温": { "label": "室内灯光色温", "type": "text", "default": "整体光线的色温在4500K，中性光。", "description": "色温描述" },
+                                    "后期色调": { "label": "后期色调", "type": "text", "default": "低饱和冷淡风调色，色彩克制，画面干净清爽。", "description": "后期调色描述" },
+                                    "光影品质": { "label": "光影品质", "type": "text", "default": "影调原生自然，以自然光为唯一主导，明暗过渡真实平缓，对比适中克制，最少后期干预。", "description": "光影品质要求" },
+                                    "室内人物、宠物配置": { "label": "室内人物、宠物配置", "type": "text", "default": "无人物宠物", "description": "人物宠物配置" }
+                                }
+                            },
+                            "摄影参数": {
+                                "icon": "📷", "title": "摄影参数",
+                                "fields": {
+                                    "相机的型号": { "label": "相机的型号", "type": "text", "default": "Sony A7R V", "description": "虚拟相机型号" },
+                                    "光圈": { "label": "光圈", "type": "text", "default": "f/5.6", "description": "光圈大小" },
+                                    "快门速度": { "label": "快门速度", "type": "text", "default": "1/250s", "description": "快门速度" },
+                                    "ISO": { "label": "ISO", "type": "text", "default": "100", "description": "感光度" },
+                                    "全画幅等效焦距": { "label": "全画幅等效焦距", "type": "text", "default": "35mm", "description": "镜头焦距" },
+                                    "拍摄技法": { "label": "拍摄技法", "type": "multi-select", "options": SHOOTING_TECHNIQUES, "default": ["单张直出"], "description": "拍摄技法选择" }
+                                }
+                            },
+                            "核心约束": {
+                                "icon": "🔒", "title": "核心约束",
+                                "fields": {
+                                    "几何保真度": { "label": "几何保真度", "type": "text", "default": "严格结构保持，固定空间结构、墙体轮廓、门窗位置、家具尺寸与摆放位置，保持透视、比例、形状一致。", "description": "几何保真约束" },
+                                    "物体完整一致性": { "label": "物体完整一致性", "type": "text", "default": "所有物体保持完整一致，原样保留，禁止新增、删除、替换任何物件。", "description": "物体完整性约束" },
+                                    "材质完整一致性": { "label": "材质完整一致性", "type": "text", "default": "保持大类材质一致，还原模型贴图颜色纹理。", "description": "材质一致性约束" },
+                                    "材质精准定义": { "label": "材质精准定义", "type": "text", "default": "识别模型贴图颜色纹理", "description": "材质精准度约束" }
+                                }
+                            },
+                            "出图参数": {
+                                "icon": "🖼️", "title": "出图参数",
+                                "fields": {
+                                    "出图比例": { "label": "出图比例", "type": "text", "default": "16:9", "description": "输出画面比例" },
+                                    "分辨率": { "label": "分辨率", "type": "text", "default": "4K 高清分辨率，清晰，完整细节", "description": "出图分辨率描述" }
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "建筑设计": {
+                "icon": "🏢", "name": "建筑设计", "hasWeather": true,
+                "sections": {},
+                "presets": [
+                    {
+                        "key": "default", "name": "默认配置",
+                        "sections": {
+                            "图生图任务指令": {
+                                "icon": "🎯", "title": "图生图任务指令",
+                                "fields": {
+                                    "图生图任务": { "label": "图生图任务", "type": "text", "default": "将sketchup建筑模型截图转真实摄影照片", "description": "描述任务转换目标" },
+                                    "转换逻辑": { "label": "转换逻辑", "type": "text", "default": "基于建筑模型截图进行写实转换，将所有模型表面替换为高精度 PBR 物理写实材质，严格遵循物理渲染原理，光影、反射、折射完全物理正确，材质表现完全符合现实世界物理规律。", "description": "核心转换逻辑描述" }
+                                }
+                            },
+                            "场景类型": {
+                                "icon": "🏢", "title": "场景类型",
+                                "fields": {
+                                    "建筑类型": { "label": "建筑类型", "type": "text", "default": "住宅建筑", "description": "建筑类型描述" },
+                                    "设计风格": { "label": "设计风格", "type": "text", "default": "现代主义建筑风格", "description": "设计风格描述" },
+                                    "外景类型": { "label": "外景类型", "type": "text", "default": "城市中心区域，周边现代建筑群，开阔的城市天际线，需要高清4K，超精细完整细节", "description": "建筑外部环境描述" },
+                                    "地点": { "label": "地点", "type": "text", "default": "上海", "description": "地理位置" }
+                                }
+                            },
+                            "光影氛围类型": {
+                                "icon": "🌅", "title": "光影氛围类型",
+                                "fields": {
+                                    "季节": { "label": "季节", "type": "text", "default": "夏季", "description": "季节设定" },
+                                    "天气": { "label": "天气", "type": "text", "default": "晴天", "description": "天气条件" },
+                                    "时间段": { "label": "时间段", "type": "text", "default": "下午3点", "description": "一天中的时段" },
+                                    "进光口控制": { "label": "进光口控制", "type": "text", "default": "自然光从天空方向入射，严格遵循真实物理光照规律，建筑立面受光均匀，禁止AI乱加光源。", "description": "光源控制指令" },
+                                    "太阳光光影": { "label": "太阳光光影", "type": "text", "default": "下午时段阳光从西侧照射，建筑立面形成自然光影层次，投影方向真实准确", "description": "太阳光效果描述" },
+                                    "后期色调": { "label": "后期色调", "type": "text", "default": "原生中性微暖后期调色，色彩平衡自然柔和，真实还原材质本色，无过度修饰。", "description": "后期调色描述" },
+                                    "光影品质": { "label": "光影品质", "type": "text", "default": "影调原生自然，以自然光为唯一主导，明暗过渡真实平缓，对比适中克制，还原建筑真实光影状态。", "description": "光影品质要求" }
+                                }
+                            },
+                            "摄影参数": {
+                                "icon": "📷", "title": "摄影参数",
+                                "fields": {
+                                    "相机的型号": { "label": "相机的型号", "type": "text", "default": "Canon EOS R5", "description": "虚拟相机型号" },
+                                    "光圈": { "label": "光圈", "type": "text", "default": "f/8", "description": "光圈大小" },
+                                    "快门速度": { "label": "快门速度", "type": "text", "default": "1/250s", "description": "快门速度" },
+                                    "ISO": { "label": "ISO", "type": "text", "default": "100", "description": "感光度" },
+                                    "全画幅等效焦距": { "label": "全画幅等效焦距", "type": "text", "default": "35mm", "description": "镜头焦距" },
+                                    "拍摄技法": { "label": "拍摄技法", "type": "multi-select", "options": SHOOTING_TECHNIQUES, "default": ["单张直出"], "description": "拍摄技法选择" }
+                                }
+                            },
+                            "核心约束": {
+                                "icon": "🔒", "title": "核心约束",
+                                "fields": {
+                                    "几何保真度": { "label": "几何保真度", "type": "text", "default": "强制几何保真，固定建筑体量、立面轮廓、门窗位置、构件尺寸，保持透视、比例、形状完全一致，严禁任何结构修改、形变、位移或重构", "description": "几何保真约束" },
+                                    "物体完整一致性": { "label": "物体完整一致性", "type": "text", "default": "所有建筑构件保持完整一致，原样保留，禁止新增、删除、替换任何构件。", "description": "物体完整性约束" },
+                                    "材质完整一致性": { "label": "材质完整一致性", "type": "text", "default": "材质质感为PBR写实材质质感，100%还原模型贴图颜色纹理，禁止修改", "description": "材质一致性约束" },
+                                    "材质精准定义": { "label": "材质精准定义", "type": "text", "default": "100%识别模型贴图颜色纹理", "description": "材质精准度约束" }
+                                }
+                            },
+                            "出图参数": {
+                                "icon": "🖼️", "title": "出图参数",
+                                "fields": {
+                                    "出图比例": { "label": "出图比例", "type": "text", "default": "100%保持原图比例", "description": "输出画面比例" },
+                                    "分辨率": { "label": "分辨率", "type": "text", "default": "8K 超高清分辨率，超高像素密度，极度清晰，超精细完整细节", "description": "出图分辨率描述" }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "key": "modern", "name": "现代风格",
+                        "sections": {
+                            "图生图任务指令": {
+                                "icon": "🎯", "title": "图生图任务指令",
+                                "fields": {
+                                    "图生图任务": { "label": "图生图任务", "type": "text", "default": "将rhino参数化建筑模型截图转概念效果图", "description": "描述任务转换目标" },
+                                    "转换逻辑": { "label": "转换逻辑", "type": "text", "default": "基于参数化模型截图进行超写实转换，将所有模型表面替换为高精度 PBR 物理写实材质，参数化表皮在阳光下呈现流动的光影效果，严格遵循物理渲染原理。", "description": "核心转换逻辑描述" }
+                                }
+                            },
+                            "场景类型": {
+                                "icon": "🏢", "title": "场景类型",
+                                "fields": {
+                                    "建筑类型": { "label": "建筑类型", "type": "text", "default": "商业综合体，超高层办公建筑", "description": "建筑类型描述" },
+                                    "设计风格": { "label": "设计风格", "type": "text", "default": "参数化设计，流线型体量，未来科技感，智能立面，可持续设计", "description": "设计风格描述" },
+                                    "外景类型": { "label": "外景类型", "type": "text", "default": "城市CBD核心区域，周边超高层建筑群，城市天际线，需要高清4K，超精细完整细节", "description": "建筑外部环境描述" },
+                                    "地点": { "label": "地点", "type": "text", "default": "深圳", "description": "地理位置" }
+                                }
+                            },
+                            "光影氛围类型": {
+                                "icon": "🌅", "title": "光影氛围类型",
+                                "fields": {
+                                    "季节": { "label": "季节", "type": "text", "default": "夏季", "description": "季节设定" },
+                                    "天气": { "label": "天气", "type": "text", "default": "晴天", "description": "天气条件" },
+                                    "时间段": { "label": "时间段", "type": "text", "default": "下午3点", "description": "一天中的时段" },
+                                    "进光口控制": { "label": "进光口控制", "type": "text", "default": "自然光从天空方向入射，玻璃幕墙反射天空与周围建筑，严格遵循真实物理光照规律。", "description": "光源控制指令" },
+                                    "太阳光光影": { "label": "太阳光光影", "type": "text", "default": "下午时段阳光照射，参数化表皮形成丰富的光影变化，玻璃幕墙反射天空云层", "description": "太阳光效果描述" },
+                                    "后期色调": { "label": "后期色调", "type": "text", "default": "电影感青橙调色，高光偏暖，阴影偏冷，画面质感高级。", "description": "后期调色描述" },
+                                    "光影品质": { "label": "光影品质", "type": "text", "default": "影调高级感，以自然光为主导，明暗过渡细腻，建筑体量感强烈，整体光影具有建筑摄影杂志质感。", "description": "光影品质要求" }
+                                }
+                            },
+                            "摄影参数": {
+                                "icon": "📷", "title": "摄影参数",
+                                "fields": {
+                                    "相机的型号": { "label": "相机的型号", "type": "text", "default": "无人机航拍", "description": "虚拟相机型号" },
+                                    "光圈": { "label": "光圈", "type": "text", "default": "f/8", "description": "光圈大小" },
+                                    "快门速度": { "label": "快门速度", "type": "text", "default": "1/250s", "description": "快门速度" },
+                                    "ISO": { "label": "ISO", "type": "text", "default": "100", "description": "感光度" },
+                                    "全画幅等效焦距": { "label": "全画幅等效焦距", "type": "text", "default": "24mm", "description": "镜头焦距" },
+                                    "拍摄技法": { "label": "拍摄技法", "type": "multi-select", "options": SHOOTING_TECHNIQUES, "default": ["单张直出"], "description": "拍摄技法选择" }
+                                }
+                            },
+                            "核心约束": {
+                                "icon": "🔒", "title": "核心约束",
+                                "fields": {
+                                    "几何保真度": { "label": "几何保真度", "type": "text", "default": "强制几何保真，固定建筑体量、立面轮廓、参数化表皮几何、构件尺寸，保持透视、比例、形状完全一致，严禁任何结构修改", "description": "几何保真约束" },
+                                    "物体完整一致性": { "label": "物体完整一致性", "type": "text", "default": "所有建筑构件保持完整一致，原样保留，禁止新增、删除、替换任何构件。", "description": "物体完整性约束" },
+                                    "材质完整一致性": { "label": "材质完整一致性", "type": "text", "default": "材质质感为PBR写实材质质感，100%还原模型贴图颜色纹理，禁止修改", "description": "材质一致性约束" },
+                                    "材质精准定义": { "label": "材质精准定义", "type": "text", "default": "100%识别模型贴图颜色纹理，精准还原玻璃幕墙反射、金属表皮光泽、混凝土质感", "description": "材质精准度约束" }
+                                }
+                            },
+                            "出图参数": {
+                                "icon": "🖼️", "title": "出图参数",
+                                "fields": {
+                                    "出图比例": { "label": "出图比例", "type": "text", "default": "16:9 宽屏比例", "description": "输出画面比例" },
+                                    "分辨率": { "label": "分辨率", "type": "text", "default": "8K 超高清分辨率，超高像素密度，极度清晰，超精细完整细节", "description": "出图分辨率描述" }
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "景观设计": {
+                "icon": "🌿", "name": "景观设计", "hasWeather": true,
+                "sections": {},
+                "presets": [
+                    {
+                        "key": "default", "name": "默认配置",
+                        "sections": {
+                            "图生图任务指令": {
+                                "icon": "🎯", "title": "图生图任务指令",
+                                "fields": {
+                                    "图生图任务": { "label": "图生图任务", "type": "text", "default": "将sketchup景观模型截图转真实摄影照片", "description": "描述任务转换目标" },
+                                    "转换逻辑": { "label": "转换逻辑", "type": "text", "default": "基于景观模型截图进行写实转换，将所有模型表面替换为高精度 PBR 物理写实材质，植物叶片、石材、水体等材质严格遵循物理渲染原理，材质表现完全符合现实世界物理规律。", "description": "核心转换逻辑描述" }
+                                }
+                            },
+                            "场景类型": {
+                                "icon": "🌿", "title": "场景类型",
+                                "fields": {
+                                    "景观类型": { "label": "景观类型", "type": "text", "default": "住宅花园景观", "description": "景观类型描述" },
+                                    "设计风格": { "label": "设计风格", "type": "text", "default": "现代景观设计，自然生态，层次丰富，四季有景", "description": "设计风格描述" },
+                                    "植物配置": { "label": "植物配置", "type": "text", "default": "乔木、灌木、地被、花卉、草坪多层次植物配置，色彩丰富，季相变化明显", "description": "植物配置描述" },
+                                    "水景元素": { "label": "水景元素", "type": "text", "default": "镜面水池，水面倒映周围植物与天空", "description": "水景元素描述" },
+                                    "外景类型": { "label": "外景类型", "type": "text", "default": "周边自然环境，远处的山体或城市天际线，需要高清4K，超精细完整细节", "description": "外部环境描述" },
+                                    "地点": { "label": "地点", "type": "text", "default": "杭州", "description": "地理位置" }
+                                }
+                            },
+                            "光影氛围类型": {
+                                "icon": "🌅", "title": "光影氛围类型",
+                                "fields": {
+                                    "季节": { "label": "季节", "type": "text", "default": "夏季", "description": "季节设定" },
+                                    "天气": { "label": "天气", "type": "text", "default": "晴天", "description": "天气条件" },
+                                    "时间段": { "label": "时间段", "type": "text", "default": "下午3点", "description": "一天中的时段" },
+                                    "进光口控制": { "label": "进光口控制", "type": "text", "default": "自然光从天空方向入射，严格遵循真实物理光照规律，植物光影自然真实，禁止AI乱加光源。", "description": "光源控制指令" },
+                                    "太阳光光影": { "label": "太阳光光影", "type": "text", "default": "下午时段阳光从西侧照射，树影斑驳投射在草坪与步道上，光影自然真实", "description": "太阳光效果描述" },
+                                    "后期色调": { "label": "后期色调", "type": "text", "default": "原生中性微暖后期调色，色彩平衡自然柔和，真实还原植物与材质本色。", "description": "后期调色描述" },
+                                    "光影品质": { "label": "光影品质", "type": "text", "default": "影调原生自然，以自然光为唯一主导，明暗过渡真实平缓，植物色彩真实饱满，还原景观真实光影状态。", "description": "光影品质要求" }
+                                }
+                            },
+                            "摄影参数": {
+                                "icon": "📷", "title": "摄影参数",
+                                "fields": {
+                                    "相机的型号": { "label": "相机的型号", "type": "text", "default": "无人机航拍", "description": "虚拟相机型号" },
+                                    "光圈": { "label": "光圈", "type": "text", "default": "f/8", "description": "光圈大小" },
+                                    "快门速度": { "label": "快门速度", "type": "text", "default": "1/250s", "description": "快门速度" },
+                                    "ISO": { "label": "ISO", "type": "text", "default": "100", "description": "感光度" },
+                                    "全画幅等效焦距": { "label": "全画幅等效焦距", "type": "text", "default": "24mm", "description": "镜头焦距" },
+                                    "拍摄技法": { "label": "拍摄技法", "type": "multi-select", "options": SHOOTING_TECHNIQUES, "default": ["单张直出"], "description": "拍摄技法选择" }
+                                }
+                            },
+                            "核心约束": {
+                                "icon": "🔒", "title": "核心约束",
+                                "fields": {
+                                    "几何保真度": { "label": "几何保真度", "type": "text", "default": "强制几何保真，固定景观空间结构、地形轮廓、构筑物位置、植物种植位置，保持透视、比例、形状完全一致，严禁任何结构修改", "description": "几何保真约束" },
+                                    "物体完整一致性": { "label": "物体完整一致性", "type": "text", "default": "所有景观元素保持完整一致，原样保留，禁止新增、删除、替换任何植物或构筑物。", "description": "物体完整性约束" },
+                                    "材质完整一致性": { "label": "材质完整一致性", "type": "text", "default": "材质质感为PBR写实材质质感，100%还原模型贴图颜色纹理，植物叶片、石材、水体等材质真实自然", "description": "材质一致性约束" },
+                                    "材质精准定义": { "label": "材质精准定义", "type": "text", "default": "100%识别模型贴图颜色纹理，精准还原植物色彩、石材肌理、水体反射", "description": "材质精准度约束" }
+                                }
+                            },
+                            "出图参数": {
+                                "icon": "🖼️", "title": "出图参数",
+                                "fields": {
+                                    "出图比例": { "label": "出图比例", "type": "text", "default": "100%保持原图比例", "description": "输出画面比例" },
+                                    "分辨率": { "label": "分辨率", "type": "text", "default": "8K 超高清分辨率，超高像素密度，极度清晰，超精细完整细节", "description": "出图分辨率描述" }
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        };
 
-// ==================== HELPERS ====================
-function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-function escapeAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
-function getFieldByKey(fk) {
-    if (!formSchema) return null;
-    for (const sk in formSchema) {
-        const sec = formSchema[sk];
-        if (sec.fields && sec.fields[fk]) return sec.fields[fk];
-    }
-    return null;
-}
-function normOptionItem(raw) {
-    if (typeof raw === 'string') return { value: raw, label: raw };
-    if (typeof raw === 'object') return { value: String(raw.value), label: String(raw.label) };
-    return null;
-}
-function flatOptionValues(field) {
-    if (field.group && field.options && typeof field.options === 'object' && !Array.isArray(field.options)) {
-        const out = [];
-        for (const g in field.options) {
-            (field.options[g] || []).forEach(item => {
-                const n = normOptionItem(item);
-                if (n) out.push(n.value);
+        let currentData = {};
+        let formSchema = null;
+        let currentGroupKey = '室内设计';
+        let currentPresetKey = 'default';
+
+        function getActivePreset() {
+            const g = getCurrentGroup();
+            const presets = g?.presets || [];
+            if (!presets.length) return null;
+            return presets.find(p => p.key === currentPresetKey) || presets[0];
+        }
+
+        function getSchemaForActivePreset() {
+            const g = getCurrentGroup();
+            const preset = getActivePreset();
+            if (preset?.sections && orderedKeys(preset.sections).length) {
+                return preset.sections;
+            }
+            return g?.sections || {};
+        }
+
+        function orderedKeys(obj) {
+            return Object.keys(obj || {});
+        }
+
+        function getCurrentGroup() {
+            return configData[currentGroupKey] || null;
+        }
+
+        function renderWeatherBar() {
+            const bar = document.getElementById('weatherBar');
+            if (!bar) return;
+            const g = getCurrentGroup();
+            if (!g?.hasWeather) { bar.innerHTML = ''; return; }
+            bar.innerHTML = Object.keys(weatherConfig).map(key => {
+                const w = weatherConfig[key];
+                const active = key === currentWeather ? ' active' : '';
+                return `<button type="button" class="weather-btn${active}" data-weather="${key}">${w.icon} ${w.name}</button>`;
+            }).join('');
+            bar.querySelectorAll('.weather-btn').forEach(btn => {
+                btn.onclick = () => {
+                    currentWeather = btn.dataset.weather;
+                    renderWeatherBar();
+                    updatePreview();
+                };
             });
         }
-        return out;
-    }
-    return (field.options || []).map(i => normOptionItem(i)?.value).filter(Boolean);
-}
-function labelForOptionValue(field, v) {
-    if (!field || !field.options) return v;
-    const list = Array.isArray(field.options) ? field.options : Object.values(field.options).flat();
-    const item = list.find(i => normOptionItem(i).value === v);
-    return item ? normOptionItem(item).label : v;
-}
-function pickInitialValue(field) {
-    if (field.type === 'switch') return !!field.default;
-    if (field.type === 'multi-select') return Array.isArray(field.default) ? field.default : [];
-    if (field.type === 'select' || field.type === 'button-select') {
-        const opts = flatOptionValues(field);
-        return opts.includes(field.default) ? field.default : opts[0] || '';
-    }
-    if (field.type === 'text') return String(field.default || '');
-    return '';
-}
-function valTagText(field, v) {
-    if (field.type === 'switch') return v ? '开' : '关';
-    if (field.type === 'multi-select') return v.map(x => labelForOptionValue(field,x)).join(' · ') || '未选';
-    if (field.type === 'select' || field.type === 'button-select') return labelForOptionValue(field,v) || '未选';
-    return v || '未填';
-}
 
-// ==================== TOAST ====================
-function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(t._tid);
-    t._tid = setTimeout(() => t.classList.remove('show'), 2000);
-}
+        function renderGroupNav() {
+            const bar = document.getElementById('groupNavBar');
+            if (!bar) return;
+            const gks = orderedKeys(configData);
+            bar.innerHTML = gks.map(gk => {
+                const g = configData[gk];
+                const active = gk === currentGroupKey ? ' active' : '';
+                return `<button type="button" class="group-tab${active}" data-group="${escapeAttr(gk)}">${escapeHtml(g.icon || '')} ${escapeHtml(g.name || gk)}</button>`;
+            }).join('');
+            bar.querySelectorAll('.group-tab').forEach(btn => {
+                btn.onclick = () => {
+                    const gk = btn.dataset.group;
+                    if (gk === currentGroupKey) return;
+                    currentGroupKey = gk;
+                    const presets = getCurrentGroup()?.presets || [];
+                    currentPresetKey = presets.length ? presets[0].key : '';
+                    renderGroupNav();
+                    renderPresetNav();
+                    renderWeatherBar();
+                    applyGroupSchema();
+                };
+            });
+        }
 
-// ==================== OUTPUT SWITCH ====================
-function switchOutputTab(mode) {
-    currentOutputMode = mode;
-    document.getElementById('json-preview').style.display = mode === 'json' ? 'block' : 'none';
-    document.getElementById('text-preview').style.display = mode === 'text' ? 'block' : 'none';
-    document.querySelectorAll('.out-tab-btn').forEach(b => {
-        b.classList.toggle('active', b.textContent === (mode === 'json' ? 'JSON' : '文本'));
-    });
-}
+        function renderPresetNav() {
+            const bar = document.getElementById('presetNavBar');
+            const g = getCurrentGroup();
+            if (!bar) return;
+            const presets = g?.presets || [];
+            if (!presets.length) {
+                bar.innerHTML = '<span style="color:var(--text-muted);font-size:0.85rem">该组暂无默认配置</span>';
+                return;
+            }
+            bar.innerHTML = presets.map(p => {
+                const active = p.key === currentPresetKey ? ' active' : '';
+                return `<button type="button" class="preset-pill${active}" data-preset="${escapeAttr(p.key)}">${escapeHtml(p.name || p.key)}</button>`;
+            }).join('');
+            bar.querySelectorAll('.preset-pill').forEach(btn => {
+                btn.onclick = () => {
+                    const pk = btn.dataset.preset;
+                    const preset = presets.find(x => x.key === pk);
+                    if (!preset) return;
+                    currentPresetKey = pk;
+                    renderPresetNav();
+                    renderWeatherBar();
+                    applyGroupSchema();
+                };
+            });
+        }
 
-// ==================== JSON PREVIEW ====================
-function splitBoolFieldKeyToJsonPair(fk) {
-    const i = Math.max(fk.indexOf(':'), fk.indexOf('：'));
-    if (i < 0) return null;
-    return { jsonKey: fk.slice(0, i).trim(), jsonVal: fk.slice(i + 1).trim() };
-}
+        function applyGroupSchema() {
+            const sections = getSchemaForActivePreset();
+            if (!orderedKeys(sections).length) {
+                document.getElementById('form-container').innerHTML =
+                    '<div style="text-align:center;padding:40px;color:var(--text-muted)">该组暂无配置</div>';
+                formSchema = null;
+                currentData = {};
+                updatePreview();
+                return;
+            }
+            buildForm(sections);
+        }
 
-function buildNestedOutput() {
-    const nested = {};
-    if (formSchema) {
-        for (const sk in formSchema) {
-            if (sk === '分镜制作') continue;
-            nested[sk] = {};
-            const fields = formSchema[sk].fields;
-            for (const fk in fields) {
-                const field = fields[fk];
-                const val = currentData[fk];
-                if (field.type === 'switch') {
-                    if (!val) continue;
-                    const p = splitBoolFieldKeyToJsonPair(fk);
-                    if (p) nested[sk][p.jsonKey] = p.jsonVal;
-                    else nested[sk][fk] = true;
-                } else {
-                    nested[sk][fk] = val;
-                }
+        window.onload = () => {
+            document.querySelectorAll('.wechat-val').forEach(el => el.textContent = WECHAT_ID);
+            renderGroupNav();
+            renderPresetNav();
+            renderWeatherBar();
+            applyGroupSchema();
+        };
+
+        function escapeAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
+        function escapeJsSq(s) {
+            return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r/g, '\\r').replace(/\n/g, '\\n');
+        }
+        function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function looksLikeJsonObject(str) {
+            const s = String(str).trim();
+            return s.startsWith('{') && s.endsWith('}');
+        }
+        function parseCompleteJson(str) {
+            if (!looksLikeJsonObject(str)) return null;
+            try {
+                const v = JSON.parse(String(str).trim());
+                return v !== null && typeof v === 'object' && !Array.isArray(v) ? v : null;
+            } catch (e) {
+                return null;
             }
         }
-    }
-    return nested;
-}
-
-function buildTextOutput() {
-    const out = buildNestedOutput();
-    const lines = [];
-    for (const sk in out) {
-        lines.push('【' + sk + '】');
-        for (const k in out[sk]) {
-            lines.push('  ' + k + ': ' + out[sk][k]);
+        function resolveFieldValueForPreview(val) {
+            if (typeof val === 'string') {
+                const parsed = parseCompleteJson(val);
+                if (parsed !== null) return parsed;
+            }
+            return val;
         }
-        lines.push('');
-    }
-    return lines.join('\n');
-}
-
-function buildReversePrompt() {
-    return [
-        '禁止出现水印、logo、二维码、文字、拼写错误。',
-        '避免模糊、比例拉伸、结构变形。',
-        '确保物体、材质、光影一致。',
-        '防止涂抹感、元素缺失、过度美化。'
-    ].join('\n');
-}
-
-function updatePreview() {
-    const jsonOut = buildNestedOutput();
-    document.getElementById('json-preview').textContent = JSON.stringify(jsonOut, null, 2);
-    document.getElementById('text-preview').textContent = buildTextOutput();
-    document.getElementById('reversePrompt').textContent = buildReversePrompt();
-}
-
-// ==================== DATA UPDATES ====================
-function updateData(key, val) {
-    currentData[key] = val;
-    const tag = document.getElementById('val-' + key);
-    const field = getFieldByKey(key);
-    if (tag && field) {
-        tag.textContent = valTagText(field, val);
-        tag.classList.toggle('empty', val === false || (Array.isArray(val) ? val.length === 0 : val === ''));
-    }
-    // If this field has dependents, rebuild the current tab
-    if (field && field.type === 'switch') {
-        rebuildCurrentTab();
-    }
-    updatePreview();
-}
-
-function updateMultiData(key, val, checked) {
-    if (checked) currentData[key].push(val);
-    else currentData[key] = currentData[key].filter(x => x !== val);
-    const tag = document.getElementById('val-' + key);
-    const field = getFieldByKey(key);
-    if (tag && field) {
-        tag.textContent = currentData[key].length ? currentData[key].map(x => labelForOptionValue(field,x)).join(' · ') : '未选';
-        tag.classList.toggle('empty', !currentData[key].length);
-    }
-    updatePreview();
-}
-
-function handleSelectChange(key, val) {
-    if (val === '__ADD_NEW__') {
-        document.getElementById('adder-' + key).classList.add('active');
-    } else {
-        document.getElementById('adder-' + key).classList.remove('active');
-        updateData(key, val);
-    }
-}
-
-function toggleAdder(key) { document.getElementById('adder-' + key).classList.toggle('active'); }
-
-function saveCustomItem(key, type) {
-    const v = document.getElementById('input-' + key).value.trim();
-    if (!v) return;
-    if (type === 'select') {
-        const sel = document.getElementById('select-' + key);
-        sel.add(new Option(v, v), sel.options[sel.options.length - 1]);
-        sel.value = v;
-        updateData(key, v);
-    } else if (type === 'button-select') {
-        const pg = document.getElementById('pills-' + key);
-        const name = pg.querySelector('input[type="radio"]').name;
-        const label = document.createElement('label');
-        label.className = 'pill-label';
-        label.innerHTML = '<input type="radio" name="' + name + '" value="' + escapeAttr(v) + '" checked onchange="updateData(\'' + key + '\',this.value)"><span class="pill-text">' + escapeHtml(v) + '</span>';
-        pg.insertBefore(label, pg.lastElementChild);
-        updateData(key, v);
-    } else {
-        const pg = document.getElementById('pills-' + key);
-        const label = document.createElement('label');
-        label.className = 'pill-label';
-        label.innerHTML = '<input type="checkbox" value="' + escapeAttr(v) + '" checked onchange="updateMultiData(\'' + key + '\',this.value,this.checked)"><span class="pill-text">' + escapeHtml(v) + '</span>';
-        pg.insertBefore(label, pg.lastElementChild);
-        updateMultiData(key, v, true);
-    }
-    document.getElementById('input-' + key).value = '';
-    document.getElementById('adder-' + key).classList.remove('active');
-}
-
-// ==================== BUILD FORM FROM SCHEMA ====================
-function buildTabs(schema) {
-    const tabBar = document.getElementById('tabBar');
-    const content = document.getElementById('tabContent');
-    tabBar.innerHTML = '';
-
-    // Static tabs (storyboard, doubao, collections, and maybe merge with dynamic manually)
-    const allTabIds = [];
-    let first = true;
-    for (const sk in schema) {
-        if (sk === '分镜制作') continue;
-        const section = schema[sk];
-        const btn = document.createElement('button');
-        btn.className = 'tab-btn' + (first ? ' active' : '');
-        btn.textContent = (section.icon || '') + ' ' + sk;
-        btn.dataset.tab = 'tab-' + sk;
-        btn.onclick = () => switchTab('tab-' + sk);
-        tabBar.appendChild(btn);
-        allTabIds.push('tab-' + sk);
-        first = false;
-
-        // Panel
-        let panel = content.querySelector('#tab-' + sk);
-        if (!panel) {
-            panel = document.createElement('div');
-            panel.className = 'tab-panel';
-            panel.id = 'tab-' + sk;
-            content.appendChild(panel);
+        function normOptionItem(raw) {
+            if (typeof raw === 'string') return { value: raw, label: raw };
+            if (typeof raw === 'object') return { value: String(raw.value), label: String(raw.label) };
+            return null;
         }
-        panel.innerHTML = '<div class="section-title"><span>' + (section.icon || '📌') + '</span> ' + escapeHtml(section.title) + '</div>';
-        panel.classList.toggle('active', allTabIds.length === 1);
-        const grid = document.createElement('div');
-        grid.className = 'grid-container';
-        buildSectionFields(section, grid);
-        panel.appendChild(grid);
-    }
-
-    // Storyboard tab button
-    const sbBtn = document.createElement('button');
-    sbBtn.className = 'tab-btn';
-    sbBtn.textContent = schema['分镜制作'] ? '🎬 分镜助手' : '🎬 分镜';
-    sbBtn.dataset.tab = 'tab-storyboard';
-    sbBtn.onclick = () => switchTab('tab-storyboard');
-    tabBar.appendChild(sbBtn);
-    allTabIds.push('tab-storyboard');
-
-    // Doubao tab button
-    const dbBtn = document.createElement('button');
-    dbBtn.className = 'tab-btn';
-    dbBtn.textContent = '🔍 豆包反解';
-    dbBtn.dataset.tab = 'tab-doubao';
-    dbBtn.onclick = () => switchTab('tab-doubao');
-    tabBar.appendChild(dbBtn);
-    allTabIds.push('tab-doubao');
-
-    // Collections tab button
-    const colBtn = document.createElement('button');
-    colBtn.className = 'tab-btn';
-    colBtn.textContent = '📁 收藏';
-    colBtn.dataset.tab = 'tab-collections';
-    colBtn.onclick = () => switchTab('tab-collections');
-    tabBar.appendChild(colBtn);
-    allTabIds.push('tab-collections');
-
-    // Ensure first tab is active
-    switchTab(allTabIds[0]);
-}
-
-function buildSectionFields(section, grid) {
-    const fields = section.fields;
-    for (const fk in fields) {
-        const field = fields[fk];
-        if (field.depends && !currentData[field.depends]) continue;
-        const card = document.createElement('div');
-        card.className = 'card';
-        const iv = (fk in currentData) ? currentData[fk] : pickInitialValue(field);
-        if (!(fk in currentData)) currentData[fk] = iv;
-        const tagShow = valTagText(field, iv);
-        const tagClass = (iv === false || (Array.isArray(iv) && iv.length === 0) || iv === '')
-            ? 'selected-value empty' : 'selected-value';
-
-        let inner = '<div class="card-header">';
-        inner += '<div class="card-title-group">';
-        inner += '<span class="card-label">' + escapeHtml(field.label || fk) + '</span>';
-        if (field.description) inner += '<p class="card-description">' + escapeHtml(field.description) + '</p>';
-        inner += '<span id="val-' + fk + '" class="' + tagClass + '">' + tagShow + '</span>';
-        inner += '</div>';
-
-        if (field.type === 'switch') {
-            inner += '<label class="switch"><input type="checkbox"' + (iv ? ' checked' : '') + ' onchange="updateData(\'' + fk + '\',this.checked)"><span class="slider"></span></label>';
-            inner += '</div>';
-        } else {
-            inner += '</div><div>';
-            if (field.type === 'text') {
-                inner += '<input type="text" data-key="' + escapeAttr(fk) + '" value="' + escapeAttr(iv) + '" oninput="updateData(\'' + fk + '\',this.value)">';
-            } else if (field.type === 'select') {
-                inner += '<select id="select-' + fk + '" onchange="handleSelectChange(\'' + fk + '\',this.value)">';
-                if (field.group && field.options && typeof field.options === 'object' && !Array.isArray(field.options)) {
-                    for (const g in field.options) {
-                        inner += '<optgroup label="' + escapeAttr(g) + '">';
-                        (field.options[g] || []).forEach(opt => {
-                            const n = normOptionItem(opt);
-                            inner += '<option value="' + escapeAttr(n.value) + '"' + (n.value === iv ? ' selected' : '') + '>' + escapeHtml(n.label) + '</option>';
-                        });
-                        inner += '</optgroup>';
-                    }
-                } else {
-                    (field.options || []).forEach(opt => {
-                        const n = normOptionItem(opt);
-                        inner += '<option value="' + escapeAttr(n.value) + '"' + (n.value === iv ? ' selected' : '') + '>' + escapeHtml(n.label) + '</option>';
+        function getFieldByKey(fieldKey) {
+            if (!formSchema) return null;
+            for (const sk of Object.keys(formSchema)) {
+                const sec = formSchema[sk];
+                if (sec.fields && sec.fields[fieldKey]) return sec.fields[fieldKey];
+            }
+            return null;
+        }
+        function flatOptionValues(field) {
+            if (field.group && field.options && typeof field.options === 'object') {
+                const out = [];
+                for (const g in field.options) {
+                    field.options[g].forEach(item => {
+                        const n = normOptionItem(item);
+                        if (n) out.push(n.value);
                     });
                 }
-                inner += '<option value="__ADD_NEW__">➕ 自定义</option></select>';
-            } else if (field.type === 'multi-select') {
-                inner += '<div class="pill-group" id="pills-' + fk + '">';
-                (field.options || []).forEach(opt => {
-                    const n = normOptionItem(opt);
-                    const checked = iv.includes(n.value) ? ' checked' : '';
-                    inner += '<label class="pill-label"><input type="checkbox" value="' + escapeAttr(n.value) + '"' + checked + ' onchange="updateMultiData(\'' + fk + '\',this.value,this.checked)"><span class="pill-text">' + escapeHtml(n.label) + '</span></label>';
-                });
-                inner += '<div class="pill-text" style="border-style:dashed" onclick="toggleAdder(\'' + fk + '\')">+ 自定义</div></div>';
-            } else if (field.type === 'button-select') {
-                const name = 'radio-' + fk;
-                inner += '<div class="pill-group pill-group-single" id="pills-' + fk + '">';
-                (field.options || []).forEach(opt => {
-                    const n = normOptionItem(opt);
-                    inner += '<label class="pill-label"><input type="radio" name="' + name + '" value="' + escapeAttr(n.value) + '"' + (n.value === iv ? ' checked' : '') + ' onchange="updateData(\'' + fk + '\',this.value)"><span class="pill-text">' + escapeHtml(n.label) + '</span></label>';
-                });
-                inner += '<div class="pill-text" style="border-style:dashed" onclick="toggleAdder(\'' + fk + '\')">+ 自定义</div></div>';
+                return out;
             }
-            inner += '<div id="adder-' + fk + '" class="hidden-adder"><input type="text" id="input-' + fk + '" placeholder="输入新值"><button class="copy-btn" style="background:var(--primary-color);color:#fff" onclick="saveCustomItem(\'' + fk + '\',\'' + field.type + '\')">确定</button></div>';
-            inner += '</div>';
+            return (field.options || []).map(i => normOptionItem(i)?.value).filter(Boolean);
         }
-        card.innerHTML = inner;
-        grid.appendChild(card);
-    }
-}
-
-function switchTab(tabId) {
-    document.querySelectorAll('#tabBar .tab-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.tab === tabId);
-    });
-    document.querySelectorAll('#tabContent .tab-panel').forEach(p => {
-        p.classList.toggle('active', p.id === tabId);
-    });
-}
-
-function rebuildCurrentTab() {
-    // Commit focused text input before rebuilding to avoid losing in-progress text
-    const focused = document.activeElement;
-    if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA') && focused.dataset.key) {
-        updateData(focused.dataset.key, focused.value);
-    }
-    const activeTab = document.querySelector('#tabBar .tab-btn.active');
-    if (!activeTab) return;
-    const tabId = activeTab.dataset.tab;
-    const panel = document.getElementById(tabId);
-    if (!panel) return;
-    const sectionKey = tabId.replace('tab-', '');
-    const section = formSchema[sectionKey];
-    if (!section) return;
-    const grid = panel.querySelector('.grid-container');
-    if (grid) {
-        grid.innerHTML = '';
-        buildSectionFields(section, grid);
-    }
-}
-
-// ==================== WEATHER ====================
-// ==================== LOAD CONFIG ====================
-async function loadConfig() {
-    const candidates = [currentConfigPath];
-    if (window.location.protocol === 'file:') {
-        candidates.push('https://yiyuqiao2748.github.io/prompt-studio/' + currentConfigPath);
-    }
-
-    let response = null;
-    let lastError = null;
-    for (const path of candidates) {
-        try {
-            response = await fetch(path);
-            if (!response.ok) throw new Error('配置文件加载失败');
-            break;
-        } catch (e) {
-            lastError = e;
+        function labelForOptionValue(field, v) {
+            if (!field || !field.options) return v;
+            const list = Array.isArray(field.options) ? field.options : Object.values(field.options).flat();
+            const item = list.find(i => normOptionItem(i).value === v);
+            return item ? normOptionItem(item).label : v;
         }
-    }
-
-    try {
-        if (!response) throw lastError || new Error('配置文件加载失败');
-        formSchema = await response.json();
-        currentData = {};
-        document.getElementById('tabBar').innerHTML = '';
-        // Preserve special panels, remove dynamic panels
-        const content = document.getElementById('tabContent');
-        const allPanels = content.querySelectorAll('.tab-panel');
-        const keepIds = ['tab-storyboard', 'tab-doubao', 'tab-collections'];
-        allPanels.forEach(p => {
-            if (!keepIds.includes(p.id)) p.remove();
-        });
-        buildTabs(formSchema);
-        applyUrlPreset();
-        updatePreview();
-    } catch (e) {
-        document.getElementById('tabContent').innerHTML = '<div style="color:#ef4444;text-align:center;padding:24px">加载失败: ' + escapeHtml(e.message) + '</div>';
-    }
-}
-
-// ==================== COPY ====================
-function copyOutput() {
-    const text = currentOutputMode === 'json'
-        ? document.getElementById('json-preview').textContent
-        : document.getElementById('text-preview').textContent;
-    if (!text || text === '{}') { showToast('无内容可复制'); return; }
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => showToast('✅ 已复制'));
-    } else {
-        const ta = document.createElement('textarea');
-        ta.value = text; document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); ta.remove();
-        showToast('✅ 已复制');
-    }
-}
-
-// ==================== COLLECTION ====================
-function saveToCollection() {
-    const item = {
-        time: new Date().toLocaleString(),
-        data: JSON.parse(JSON.stringify(currentData)),
-        json: buildNestedOutput(),
-        text: buildTextOutput()
-    };
-    collections.unshift(item);
-    if (collections.length > 50) collections = collections.slice(0, 50);
-    localStorage.setItem('proprompt_collections', JSON.stringify(collections));
-    renderCollections();
-    showToast('已保存到收藏');
-}
-
-function renderCollections() {
-    const container = document.getElementById('collectionList');
-    if (!container) return;
-    if (!collections.length) {
-        container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px;font-size:0.82rem;">暂无收藏</div>';
-        return;
-    }
-    container.innerHTML = '';
-    collections.forEach((item, i) => {
-        const div = document.createElement('div');
-        div.className = 'collection-item';
-        const preview = (item.text || '').split('\n')[0] || '(空)';
-        div.innerHTML = '<span>' + escapeHtml(item.time) + ' - ' + escapeHtml(preview.substring(0, 40)) + '</span><div><button onclick="loadCollection(' + i + ')">加载</button><button onclick="deleteCollection(' + i + ')">删除</button></div>';
-        container.appendChild(div);
-    });
-}
-
-function loadCollection(i) {
-    const item = collections[i];
-    if (!item) return;
-    if (item.data) {
-        currentData = JSON.parse(JSON.stringify(item.data));
-        // Switch to first form tab so rebuildCurrentTab targets it, not collections
-        const firstFormTab = document.querySelector('#tabBar .tab-btn[data-tab^="tab-"]:not([data-tab="tab-collections"])');
-        if (firstFormTab) switchTab(firstFormTab.dataset.tab);
-        rebuildCurrentTab();
-        updatePreview();
-        showToast('已加载收藏项');
-    } else if (item.json) {
-        document.getElementById('json-preview').textContent = JSON.stringify(item.json, null, 2);
-        document.getElementById('text-preview').textContent = item.text || '';
-        document.getElementById('reversePrompt').textContent = buildReversePrompt();
-        showToast('已加载预览（旧版收藏，表单状态未保存）');
-    }
-}
-
-function deleteCollection(i) {
-    collections.splice(i, 1);
-    try { localStorage.setItem('proprompt_collections', JSON.stringify(collections)); } catch(e) { /* storage full */ }
-    renderCollections();
-    showToast('已删除');
-}
-
-// ==================== STORYBOARD ====================
-let sbImages = [];
-function handleSbFiles(files) {
-    sbImages = Array.from(files);
-    renderSbPreview();
-}
-function renderSbPreview() {
-    const container = document.getElementById('sbPreview');
-    const dz = document.getElementById('sbDropZone');
-    container.innerHTML = '';
-    sbImages.forEach((file, i) => {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const img = document.createElement('div');
-            img.style.cssText = 'width:96px;height:96px;border-radius:6px;background:url(' + ev.target.result + ') center/cover;border:1px solid var(--border-color);position:relative';
-            img.innerHTML = '<span style="position:absolute;top:-4px;right:-4px;background:var(--primary-color);color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700">' + (i+1) + '</span>';
-            container.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-    });
-    if (sbImages.length) {
-        dz.innerHTML = '<div style="font-size:1.1em">✅ ' + sbImages.length + ' 张图片已选择</div><div style="color:var(--text-muted);font-size:0.75rem">点击重新选择</div>';
-    }
-}
-function generateStoryboard() {
-    if (!sbImages.length) { showToast('请先上传参考图片'); return; }
-    const basePrompt = document.getElementById('storyboardPrompt').value.trim() || '专业室内设计摄影';
-    let prompt = '# 分镜提示词生成任务\n\n';
-    prompt += '你是一个专业的AI空间摄影师和提示词工程师。我现在为你提供了 ' + sbImages.length + ' 张参考图片，请按照以下要求，为每一张图片生成对应的分镜提示词。\n\n';
-    prompt += '## 对每张图片的分析要求\n';
-    prompt += '请仔细观察每张图片，分析以下内容并生成对应的分镜提示词：\n\n';
-    prompt += '1. **空间描述**：图片展示的是什么空间/场景？主要元素有哪些？\n';
-    prompt += '2. **构图角度**：从什么角度拍摄的？建议用什么角度表现？\n';
-    prompt += '3. **光影分析**：图片中的光线方向、色温、明暗对比如何？\n';
-    prompt += '4. **材质细节**：有哪些关键材质？纹理和质感如何？\n';
-    prompt += '5. **色彩氛围**：整体色调是什么？营造了什么氛围？\n';
-    prompt += '6. **重点表现**：这一帧应该重点展示什么？\n\n';
-    prompt += '## 输出格式（请严格按以下格式为每帧生成）\n\n';
-    for (let f = 1; f <= sbImages.length; f++) {
-        prompt += '### 【第 ' + f + ' 格】📷 基于参考图\n';
-        prompt += '**分析说明**：（简要描述图片内容和你的分析）\n\n';
-        prompt += '**分镜提示词：**\n' + basePrompt + '，[此处根据图片分析写入详细的场景、构图、光影、材质、色彩描述]。重点表现[根据图片确定的重点]。\n\n';
-        prompt += '**反向提示词：**\n禁止出现水印、logo、二维码、文字、拼写错误。避免模糊、比例拉伸、结构变形。确保物体、材质、光影一致。防止涂抹感、元素缺失、过度美化。\n\n';
-    }
-    prompt += '## 强制统一约束（适用于所有帧）\n';
-    prompt += '- 100%保持原图比例、结构、主体不变\n';
-    prompt += '- 营造前景深效果，增强层次感和立体感\n';
-    prompt += '- 保持画面自然和谐，避免过度处理\n\n';
-    prompt += '请开始分析图片并生成所有 ' + sbImages.length + ' 帧的分镜提示词。';
-    document.getElementById('text-preview').textContent = prompt;
-    switchOutputTab('text');
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(prompt).then(() => showToast('提示词已复制，正在打开豆包...'));
-    }
-    window.open('https://www.doubao.com/chat/', '_blank');
-}
-// Drop zone events
-document.addEventListener('DOMContentLoaded', () => {
-    const dz = document.getElementById('sbDropZone');
-    if (dz) {
-        dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.borderColor = 'var(--primary-color)'; });
-        dz.addEventListener('dragleave', e => { dz.style.borderColor = 'var(--border-color)'; });
-        dz.addEventListener('drop', e => {
-            e.preventDefault(); dz.style.borderColor = 'var(--border-color)';
-            sbImages = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-            renderSbPreview();
-        });
-    }
-});
-
-// ==================== DOUBAO DECOMPILE ====================
-function decGenerateTemplate() {
-    const doubaoPrompt = document.getElementById('doubaoPrompt').value.trim();
-    const template = buildNestedOutput();
-    // Inject doubao analysis instruction if provided
-    if (doubaoPrompt) template['豆包分析指令'] = doubaoPrompt;
-    const jsonStr = JSON.stringify(template, null, 2);
-    document.getElementById('decTemplateOutput').value = jsonStr + '\n\n// 帮我写提示词，用于AI室内设计渲染，要json格式';
-    showToast('JSON模板已生成');
-}
-function decCopyTemplate() {
-    const text = document.getElementById('decTemplateOutput').value;
-    if (!text || text.includes('生成JSON提示词模板')) { showToast('请先点击生成JSON模板'); return; }
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => showToast('模板已复制到剪贴板'));
-    } else {
-        const ta = document.createElement('textarea');
-        ta.value = text; document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); ta.remove();
-        showToast('模板已复制到剪贴板');
-    }
-}
-function decCopyAndOpen() {
-    const text = document.getElementById('decTemplateOutput').value;
-    if (!text || text.includes('生成JSON提示词模板')) { showToast('请先点击生成JSON模板'); return; }
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => {
-            window.open('https://www.doubao.com/chat/', '_blank');
-            showToast('已复制并打开豆包');
-        });
-    } else {
-        const ta = document.createElement('textarea');
-        ta.value = text; document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); ta.remove();
-        window.open('https://www.doubao.com/chat/', '_blank');
-        showToast('已复制并打开豆包');
-    }
-}
-
-// ==================== INIT ====================
-function parseUrlParams() {
-    const params = new URLSearchParams(window.location.search);
-    return {
-        project: params.get('project')?.trim() || '',
-        group: params.get('group')?.trim() || '',
-        preset: params.get('preset')?.trim() || ''
-    };
-}
-
-function applyUrlPreset() {
-    const { project, group, preset } = parseUrlParams();
-    const banner = document.getElementById('urlPresetBanner');
-    if (!banner) return;
-    if (!preset) {
-        banner.textContent = '';
-        return;
-    }
-    banner.textContent = `URL 预设：project=${project || 'none'}，group=${group || 'none'}，preset=${preset}`;
-
-    const mappings = buildPresetMapping(preset);
-    Object.entries(mappings).forEach(([key, value]) => {
-        if (key in currentData) {
-            currentData[key] = value;
+        function schemaDefaultValue(field) {
+            if (field.type === 'switch' || field.type === 'boolean') return !!field.default;
+            if (field.type === 'multi-select') return Array.isArray(field.default) ? [...field.default] : [];
+            if (field.type === 'select' || field.type === 'button-select') {
+                const opts = flatOptionValues(field);
+                return opts.includes(field.default) ? field.default : (opts[0] || '');
+            }
+            if (field.type === 'text') return String(field.default || '');
+            return '';
         }
-    });
 
-    const activeTabId = document.querySelector('#tabBar .tab-btn.active')?.dataset.tab;
-    buildTabs(formSchema);
-    if (activeTabId) switchTab(activeTabId);
-
-    const promptEl = document.getElementById('storyboardPrompt');
-    if (promptEl && preset) {
-        promptEl.value = preset;
-    }
-}
-
-function buildPresetMapping(preset) {
-    const lower = preset.toLowerCase();
-    const mapping = {};
-    if (lower.includes('无太阳')) {
-        mapping['太阳光影'] = '无直射阳光';
-        mapping['室内灯光'] = '无灯全自然光';
-    }
-    if (lower.includes('有太阳光影')) {
-        if (lower.includes('天花')) {
-            mapping['太阳光影'] = '强烈的阳光阴影';
-        } else if (lower.includes('树影')) {
-            mapping['太阳光影'] = '斑驳树影';
-        } else {
-            mapping['太阳光影'] = '强烈的阳光阴影';
+        function pickInitialValue(field) {
+            return schemaDefaultValue(field);
         }
-        if (lower.includes('开室内人工光')) {
-            mapping['室内灯光'] = '混合层次灯光';
+        function valTagText(field, v) {
+            if (field.type === 'switch') return v ? '开' : '关';
+            if (field.type === 'multi-select') {
+                return v.map(x => {
+                    if (typeof x === 'string' && parseCompleteJson(x) !== null) return 'JSON 对象';
+                    return labelForOptionValue(field, x);
+                }).join(' · ') || '未选';
+            }
+            if (field.type === 'select' || field.type === 'button-select') {
+                if (typeof v === 'string' && parseCompleteJson(v) !== null) return 'JSON 对象';
+                return labelForOptionValue(field, v) || '未选';
+            }
+            if (typeof v === 'string' && parseCompleteJson(v) !== null) return 'JSON 对象';
+            return v || '未填';
         }
-    }
-    if (lower.includes('树影') && !mapping['太阳光影']) {
-        mapping['太阳光影'] = '斑驳树影';
-    }
-    if (lower.includes('双层窗帘')) {
-        mapping['窗帘'] = '双层窗帘';
-    }
-    if (lower.includes('单层窗纱')) {
-        mapping['窗帘'] = '单层窗纱';
-    }
-    if (lower.includes('冷色调')) {
-        mapping['后期色调'] = '低饱和冷淡风';
-    }
-    if (lower.includes('暖色调')) {
-        mapping['后期色调'] = '胶片复古暖调';
-    }
-    if (lower.includes('无窗视角')) {
-        mapping['太阳光影'] = '无直射阳光';
-    }
-    return mapping;
-}
 
-function copyWeChat() {
-    const wechat = document.getElementById('wechatId')?.textContent || 'LinDesign666';
-    if (!navigator.clipboard) {
-        const ta = document.createElement('textarea');
-        ta.value = wechat;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        ta.remove();
-        showToast('微信号已复制');
-        return;
-    }
-    navigator.clipboard.writeText(wechat).then(() => showToast('微信号已复制'));
-}
+        function buildForm(schema) {
+            const container = document.getElementById('form-container');
+            container.innerHTML = '';
+            currentData = {};
+            formSchema = schema;
 
-window.onload = () => {
-    loadConfig();
-    switchOutputTab('json');
-    renderCollections();
-};
-</script>
+            for (const sectionKey in schema) {
+                const section = schema[sectionKey];
+                const sectionDiv = document.createElement('div');
+                sectionDiv.innerHTML = `<div class="section-title"><span>${section.icon || '📌'}</span> ${escapeHtml(section.title)}</div>`;
+
+                const grid = document.createElement('div');
+                grid.className = 'grid-container';
+
+                for (const fieldKey in section.fields) {
+                    const field = section.fields[fieldKey];
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    const initialVal = pickInitialValue(field, fieldKey);
+                    currentData[fieldKey] = initialVal;
+                    const tagShow = valTagText(field, initialVal);
+                    const tagClass = (initialVal === false || (Array.isArray(initialVal) && initialVal.length === 0) || initialVal === '')
+                        ? 'selected-value empty' : 'selected-value';
+
+                    let content = `
+                    <div class="card-header">
+                        <div class="card-title-group">
+                            <span class="card-label">${escapeHtml(field.label)}</span>
+                            ${field.description ? `<p class="card-description">${escapeHtml(field.description)}</p>` : ''}
+                            <span id="val-${fieldKey}" class="${tagClass}">${tagShow}</span>
+                        </div>`;
+
+                    if (field.type === 'switch') {
+                        content += `<label class="switch"><input type="checkbox" ${initialVal ? 'checked' : ''} onchange="updateData('${fieldKey}',this.checked)"><span class="slider"></span></label>`;
+                    } else {
+                        content += `</div><div>`;
+                        if (field.type === 'text') {
+                            content += `<input type="text" value="${escapeAttr(initialVal)}" oninput="updateData('${fieldKey}',this.value)">`;
+                        } else if (field.type === 'select') {
+                            content += `<select id="select-${fieldKey}" onchange="handleSelectChange('${fieldKey}',this.value)">`;
+                            if (field.group) {
+                                for (const g in field.options) {
+                                    content += `<optgroup label="${escapeAttr(g)}">`;
+                                    (field.options[g] || []).forEach(opt => {
+                                        const n = normOptionItem(opt);
+                                        content += `<option value="${escapeAttr(n.value)}" ${n.value === initialVal ? 'selected' : ''}>${escapeHtml(n.label)}</option>`;
+                                    });
+                                    content += `</optgroup>`;
+                                }
+                            } else {
+                                (field.options || []).forEach(opt => {
+                                    const n = normOptionItem(opt);
+                                    content += `<option value="${escapeAttr(n.value)}" ${n.value === initialVal ? 'selected' : ''}>${escapeHtml(n.label)}</option>`;
+                                });
+                            }
+                            content += `<option value="__ADD_NEW__">➕ 自定义</option></select>`;
+                        } else if (field.type === 'multi-select') {
+                            content += `<div class="pill-group" id="pills-${fieldKey}">`;
+                            (field.options || []).forEach(opt => {
+                                const n = normOptionItem(opt);
+                                const checked = initialVal.includes(n.value) ? 'checked' : '';
+                                content += `<label class="pill-label"><input type="checkbox" value="${escapeAttr(n.value)}" ${checked} onchange="updateMultiData('${fieldKey}',this.value,this.checked)"><span class="pill-text">${escapeHtml(n.label)}</span></label>`;
+                            });
+                            content += `<div class="pill-text" style="border-style:dashed" onclick="toggleAdder('${fieldKey}')">+ 自定义</div></div>`;
+                        } else if (field.type === 'button-select') {
+                            const name = `radio-${fieldKey}`;
+                            content += `<div class="pill-group pill-group-single" id="pills-${fieldKey}">`;
+                            (field.options || []).forEach(opt => {
+                                const n = normOptionItem(opt);
+                                const checked = n.value === initialVal ? 'checked' : '';
+                                content += `<label class="pill-label"><input type="radio" name="${name}" value="${escapeAttr(n.value)}" ${checked} onchange="updateData('${fieldKey}',this.value)"><span class="pill-text">${escapeHtml(n.label)}</span></label>`;
+                            });
+                            content += `<div class="pill-text" style="border-style:dashed" onclick="toggleAdder('${fieldKey}')">+ 自定义</div></div>`;
+                        }
+                        content += `<div id="adder-${fieldKey}" class="hidden-adder"><textarea class="custom-input" id="input-${fieldKey}" rows="1" placeholder="输入新值（支持 JSON 对象）" oninput="autoResizeTextarea(this); handleCustomInput('${fieldKey}')"></textarea><button class="copy-btn" style="background:var(--primary-color);flex-shrink:0" onclick="saveCustomItem('${fieldKey}','${field.type}')">确定</button></div></div>`;
+                    }
+                    card.innerHTML = content;
+                    grid.appendChild(card);
+                }
+                sectionDiv.appendChild(grid);
+                container.appendChild(sectionDiv);
+            }
+            updatePreview();
+        }
+
+        function updateData(key, val) {
+            currentData[key] = val;
+            const tag = document.getElementById('val-' + key);
+            const field = getFieldByKey(key);
+            tag.textContent = valTagText(field, val);
+            tag.classList.toggle('empty', val === false || val === '');
+            updatePreview();
+        }
+
+        function updateMultiData(key, val, checked) {
+            if (checked) currentData[key].push(val);
+            else currentData[key] = currentData[key].filter(x => x !== val);
+            const tag = document.getElementById('val-' + key);
+            const field = getFieldByKey(key);
+            tag.textContent = currentData[key].length ? currentData[key].map(x => labelForOptionValue(field,x)).join(' · ') : '未选';
+            tag.classList.toggle('empty', !currentData[key].length);
+            updatePreview();
+        }
+
+        function splitBoolFieldKeyToJsonPair(fk) {
+            const i = Math.max(fk.indexOf(':'), fk.indexOf('：'));
+            if (i < 0) return null;
+            return { jsonKey: fk.slice(0,i).trim(), jsonVal: fk.slice(i+1).trim() };
+        }
+
+        function buildNestedPreviewForDisplay() {
+            const nested = {};
+            const g = getCurrentGroup();
+            if (g?.hasWeather) {
+                nested["天气氛围"] = weatherConfig[currentWeather]?.prompt || '';
+            }
+            if (formSchema) {
+                for (const sk in formSchema) {
+                    nested[sk] = {};
+                    const fields = formSchema[sk].fields;
+                    for (const fk in fields) {
+                        const field = fields[fk];
+                        const val = currentData[fk];
+                        if (field.type === 'switch') {
+                            if (!val) continue;
+                            const p = splitBoolFieldKeyToJsonPair(fk);
+                            if (p) nested[sk][p.jsonKey] = p.jsonVal;
+                            else nested[sk][fk] = true;
+                        } else {
+                            nested[sk][fk] = resolveFieldValueForPreview(val);
+                        }
+                    }
+                }
+            }
+            return nested;
+        }
+
+        function updatePreview() {
+            const out = buildNestedPreviewForDisplay();
+            document.getElementById('json-preview').textContent = JSON.stringify(out, null, 4);
+        }
+
+        function autoResizeTextarea(ta) {
+            if (!ta) return;
+            ta.style.height = 'auto';
+            ta.style.height = Math.max(ta.scrollHeight, 38) + 'px';
+        }
+        function handleCustomInput(key) {
+            updatePreview();
+        }
+        function handleSelectChange(key, val) {
+            if (val === '__ADD_NEW__') {
+                document.getElementById('adder-' + key).classList.add('active');
+                const ta = document.getElementById('input-' + key);
+                requestAnimationFrame(() => autoResizeTextarea(ta));
+            } else {
+                document.getElementById('adder-' + key).classList.remove('active');
+                updateData(key, val);
+            }
+        }
+        function toggleAdder(key) {
+            const adder = document.getElementById('adder-' + key);
+            adder.classList.toggle('active');
+            if (adder.classList.contains('active')) {
+                const ta = document.getElementById('input-' + key);
+                requestAnimationFrame(() => autoResizeTextarea(ta));
+            }
+        }
+        function saveCustomItem(key, type) {
+            const ta = document.getElementById('input-' + key);
+            const v = ta.value.trim();
+            if (!v) return;
+            if (type === 'select') {
+                const sel = document.getElementById('select-' + key);
+                sel.add(new Option(v, v), sel.options[sel.options.length - 1]);
+                sel.value = v;
+                updateData(key, v);
+            } else if (type === 'button-select') {
+                const pg = document.getElementById('pills-' + key);
+                const name = pg.querySelector('input[type="radio"]').name;
+                const label = document.createElement('label');
+                label.className = 'pill-label';
+                label.innerHTML = `<input type="radio" name="${name}" value="${escapeAttr(v)}" checked onchange="updateData('${key}',this.value)"><span class="pill-text">${escapeHtml(v)}</span>`;
+                pg.insertBefore(label, pg.lastElementChild);
+                updateData(key, v);
+            } else {
+                const pg = document.getElementById('pills-' + key);
+                const label = document.createElement('label');
+                label.className = 'pill-label';
+                label.innerHTML = `<input type="checkbox" value="${escapeAttr(v)}" checked onchange="updateMultiData('${key}',this.value,this.checked)"><span class="pill-text">${escapeHtml(v)}</span>`;
+                pg.insertBefore(label, pg.lastElementChild);
+                updateMultiData(key, v, true);
+            }
+            ta.value = '';
+            autoResizeTextarea(ta);
+            document.getElementById('adder-' + key).classList.remove('active');
+        }
+
+        async function copyTextToClipboard(text) {
+            if (navigator.clipboard) {
+                try { await navigator.clipboard.writeText(text); return; } catch(e) {}
+            }
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+        }
+        async function feedback(btn, txt) {
+            const old = btn.textContent;
+            btn.textContent = txt;
+            btn.disabled = true;
+            setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 2000);
+        }
+        async function copyJson(btn) {
+            try {
+                await copyTextToClipboard(document.getElementById('json-preview').textContent);
+                await feedback(btn, '✅ 已复制');
+            } catch(e) { alert('复制失败'); }
+        }
+        function openDoubao() {
+            window.open(DOUBAO_URL, '_blank', 'noopener,noreferrer');
+        }
+        async function copyAndOpenDoubao(btn) {
+            try {
+                await copyTextToClipboard(document.getElementById('json-preview').textContent);
+                openDoubao();
+                await feedback(btn, '✅ 已复制');
+            } catch(e) { alert('复制失败'); }
+        }
+        async function copyWeChat(btn) {
+            try { await copyTextToClipboard(WECHAT_ID); await feedback(btn, '✅ 已复制'); }
+            catch(e) { alert('复制失败'); }
+        }
+    </script>
 </body>
 </html>
